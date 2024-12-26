@@ -1,0 +1,433 @@
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	color: #333;
+	line-height: 1.6;
+	background-color: #f5f5f7;
+}
+
+.contact-hero {
+	background-color: rgba(0, 0, 0, 0.6);
+	color: var(--pure-white);
+	text-align: center;
+	padding: 3px 20px;
+	margin: 30px auto 30px auto;
+	/* 상 우 하 좌 마진 설정 */
+	max-width: 1160px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 280px;
+	border-radius: 20px;
+	/* 모서리를 둥글게 만듭니다 */
+}
+
+.contact-hero::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: url('../images/logo.png');
+	background-size: 50%;
+	background-position: center;
+	background-repeat: no-repeat;
+	opacity: 0.3;
+	z-index: -1;
+}
+
+.contact-hero h1 {
+	font-size: 48px;
+	margin-bottom: 20px;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.contact-hero p {
+	font-size: 20px;
+	max-width: 600px;
+	margin: 0 auto 30px;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.faq-list {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+	list-style: none;
+	padding: 0;
+}
+
+.faq-list li {
+	background: rgba(255, 255, 255, 0.1);
+	padding: 20px;
+	border-radius: 10px;
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	transition: all 0.3s ease;
+}
+
+.faq-list li:hover {
+	transform: translateY(-5px);
+	background: rgba(255, 255, 255, 0.2);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.faq-list h3 {
+	margin-bottom: 10px;
+	font-size: 1.1rem;
+	color: #333;
+}
+
+.faq-list p {
+	color: #666;
+	font-size: 0.9rem;
+	line-height: 1.5;
+}
+
+.support-container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+.support-item {
+	margin-bottom: 40px;
+	background: #fff;
+	padding: 30px;
+	border-radius: 10px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.contact-section {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 60px 20px;
+}
+
+.contact-title {
+	text-align: center;
+	margin-bottom: 40px;
+	font-size: 28px;
+}
+
+.contact-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 30px;
+	justify-content: center;
+	align-items: start;
+}
+
+.contact-item {
+	background: rgba(255, 255, 255, 0.1);
+	/* 거의 완전 투명한 배경 */
+	padding: 30px;
+	border-radius: 10px;
+	text-align: center;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	backdrop-filter: blur(10px);
+	/* 배경 블러 효과 강화 */
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	/* 테두리 추가로 구분감 유지 */
+}
+
+.contact-item:hover {
+	background: rgba(255, 255, 255, 0.2);
+	/* 호버 시 약간 더 뚜렷하게 */
+	transform: translateY(-5px);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+	/* 그림자 효과 추가 */
+}
+
+.contact-icon {
+	font-size: 2.5rem;
+	margin-bottom: 20px;
+	color: #333;
+}
+
+.contact-item h3 {
+	margin-bottom: 15px;
+	font-size: 1.2rem;
+	color: #333;
+}
+
+.contact-item p {
+	color: #666;
+	font-size: 0.9rem;
+	line-height: 1.6;
+	margin: 5px 0;
+}
+
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0);
+	transition: all 0.3s ease-in-out;
+	opacity: 0;
+}
+
+.modal.show {
+	opacity: 1;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+	background-color: #fefefe;
+	margin: 15% auto;
+	padding: 20px;
+	border-radius: 10px;
+	width: 80%;
+	max-width: 800px;
+	position: relative;
+	transform: translateY(20px);
+	opacity: 0;
+	transition: all 0.3s ease-in-out;
+}
+
+.modal.show .modal-content {
+	transform: translateY(0);
+	opacity: 1;
+}
+
+.modal.hide .modal-content {
+	transform: translateY(20px);
+	opacity: 0;
+}
+
+.modal.hide {
+	opacity: 0;
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.close {
+	position: absolute;
+	right: 20px;
+	top: 10px;
+	color: #aaa;
+	font-size: 28px;
+	font-weight: bold;
+	cursor: pointer;
+}
+
+.close:hover {
+	color: #000;
+}
+
+.inquiry-item {
+	cursor: pointer;
+}
+
+#kakaoMap {
+	width: 100%;
+	height: 400px;
+	border-radius: 10px;
+}
+
+:root {
+	--map-height: 400px;
+	--map-border-radius: 10px;
+}
+
+.program-icons {
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
+}
+
+.program-icon {
+	text-align: center;
+	padding: 20px;
+	background: rgba(255, 255, 255, 0.1);
+	border-radius: 10px;
+	transition: all 0.3s ease;
+	flex: 1;
+	margin: 0 10px;
+}
+
+.program-icon i {
+	font-size: 48px;
+	margin-bottom: 15px;
+	color: #333;
+}
+
+.program-icon:hover {
+	transform: translateY(-5px);
+	background: rgba(255, 255, 255, 0.2);
+}
+
+/* 이미지 모달 전용 스타일 */
+.image-modal .modal-content {
+	margin: 5% auto;
+	max-width: 600px;
+	padding: 20px;
+}
+
+#modalImage {
+	width: 100%;
+	max-height: 60vh;
+	object-fit: contain;
+	border-radius: 5px;
+}
+
+.image-modal-content {
+	background-color: #fefefe;
+	padding: 20px;
+	border-radius: 10px;
+	position: relative;
+}
+
+/* 반응형 스타일 추가 */
+@media (max-width: 1200px) {
+	.contact-section {
+		padding: 40px 20px;
+	}
+
+	.contact-grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 20px;
+	}
+
+	.faq-list {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.program-icons {
+		flex-wrap: wrap;
+	}
+
+	.program-icon {
+		flex: 0 0 calc(50% - 20px);
+		margin-bottom: 20px;
+	}
+}
+
+@media (max-width: 768px) {
+	.contact-hero {
+		height: auto;
+		min-height: 20vh;
+		margin: 30px auto;
+		padding: 61px 15px;
+		max-width: 95%;
+		box-sizing: border-box;
+	}
+
+	.contact-hero::before {
+		background-size: cover;
+	}
+
+	.contact-hero h1 {
+		font-size: 32px;
+		margin-bottom: 15px;
+	}
+
+	.contact-hero p {
+		font-size: 16px;
+		margin-bottom: 20px;
+	}
+
+	.contact-grid {
+		grid-template-columns: 1fr;
+		gap: 15px;
+	}
+
+	.contact-item {
+		padding: 20px;
+	}
+
+	.contact-icon {
+		font-size: 2rem;
+		margin-bottom: 15px;
+	}
+
+	.faq-list {
+		grid-template-columns: 1fr;
+		gap: 15px;
+	}
+
+	.support-container {
+		padding: 0 15px;
+	}
+
+	.support-item {
+		padding: 20px;
+		margin-bottom: 20px;
+	}
+
+	#kakaoMap {
+		height: 300px;
+	}
+
+	.modal-content {
+		width: 90%;
+		margin: 20% auto;
+	}
+}
+
+@media (max-width: 480px) {
+	.contact-hero {
+		min-height: 20vh;
+		margin: 30px auto;
+		padding: 44px 10px;
+		max-width: 95%;
+		box-sizing: border-box;
+	}
+
+	.contact-hero h1 {
+		font-size: 24px;
+	}
+
+	.contact-hero p {
+		font-size: 14px;
+	}
+
+	.contact-title {
+		font-size: 20px;
+		margin-bottom: 20px;
+	}
+
+	.contact-item {
+		padding: 15px;
+	}
+
+	.contact-item h3 {
+		font-size: 1rem;
+	}
+
+	.contact-item p {
+		font-size: 0.8rem;
+	}
+
+	.program-icon {
+		flex: 0 0 100%;
+		margin: 0 0 15px 0;
+	}
+
+	.program-icon i {
+		font-size: 36px;
+	}
+
+	#kakaoMap {
+		height: 250px;
+	}
+
+	.modal-content {
+		padding: 15px;
+		margin: 30% auto;
+	}
+
+	.close {
+		right: 15px;
+		top: 5px;
+		font-size: 24px;
+	}
+}

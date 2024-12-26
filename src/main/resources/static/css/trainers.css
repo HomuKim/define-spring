@@ -1,0 +1,359 @@
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	color: #333;
+	line-height: 1.6;
+	background-color: #f5f5f7;
+}
+
+.trainer-hero {
+	background-color: rgba(0, 0, 0, 0.6);
+	color: var(--pure-white);
+	text-align: center;
+	padding: 3px 20px;
+	margin: 30px auto 30px auto;
+	/* 상 우 하 좌 마진 설정 */
+	max-width: 1160px;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 280px;
+	border-radius: 20px;
+	/* 모서리를 둥글게 만듭니다 */
+}
+
+.trainer-hero::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: url('../images/logo.png');
+	background-size: 50%;
+	background-position: center;
+	background-repeat: no-repeat;
+	opacity: 0.3;
+	z-index: -1;
+}
+
+
+.trainer-hero h1 {
+	font-size: 48px;
+	margin-bottom: 20px;
+	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.trainer-hero p {
+	font-size: 20px;
+	max-width: 600px;
+	margin: 0 auto 30px;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.trainers-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 20px;
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+	margin-bottom: 60px;
+}
+
+.trainer-card {
+	position: relative;
+	overflow: hidden;
+	border-radius: 15px;
+	box-shadow: 0 4px 8px var(--shadow-color);
+	cursor: pointer;
+	transition: transform 0.3s ease;
+	/* 카드 자체의 움직임을 부드럽게 */
+	line-height: 0;
+	/* 이미지 아래 여백 제거 */
+	font-size: 0;
+	/* 텍스트로 인한 여백 제거 */
+}
+
+
+.trainer-card:hover {
+	transform: translateY(-5px);
+}
+
+.trainer-card:hover .trainer-image {
+	transform: scale(1.1);
+}
+
+.trainer-card img {
+	width: 100%;
+	height: 400px;
+	object-fit: cover;
+	display: block;
+	/* 이미지 아래 여백 제거 */
+}
+
+.trainer-image {
+	width: 100%;
+	height: 400px;
+	object-fit: cover;
+	transition: transform 0.3s ease;
+	/* 이미지 확대 효과를 부드럽게 */
+}
+
+.trainer-info h2 {
+	font-size: 24px;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.instagram-button {
+	position: absolute;
+	bottom: 30px;
+	/* 모달 이미지의 아래쪽에 배치 */
+	right: 30px;
+	/* 모달 이미지의 오른쪽에 배치 */
+	z-index: 1001;
+	opacity: 0;
+	transition: opacity 0.3s ease-in-out;
+}
+
+
+.instagram-icon {
+	width: 40px;
+	height: 40px;
+}
+
+
+
+/* 모달 스타일 */
+.modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0, 0, 0, 0.9);
+	align-items: center;
+	justify-content: center;
+}
+
+.modal-content {
+	max-width: 98%;
+	max-height: 100vh;
+	object-fit: contain;
+	opacity: 0;
+	transition: opacity 0.3s ease-in-out;
+}
+
+.modal-content-container {
+	position: relative;
+	display: inline-block;
+}
+
+.close {
+	position: absolute;
+	top: 15px;
+	right: 35px;
+	color: #f1f1f1;
+	font-size: 40px;
+	font-weight: bold;
+	transition: 0.3s;
+	cursor: pointer;
+	display: none;
+}
+
+.close:hover,
+.close:focus {
+	color: #bbb;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+.prev-btn,
+.next-btn {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	background-color: transparent;
+	border: none;
+	color: white;
+	width: 40px;
+	height: 40px;
+	font-size: 50px;
+	cursor: pointer;
+	border-radius: 50%;
+	transition: all 0.3s ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	/* 초기 상태는 투명하게 */
+}
+
+.prev-btn {
+	left: 30%;
+}
+
+.next-btn {
+	right: 30%;
+}
+
+/* 모달이 열린 후 버튼 표시 */
+.modal.active .prev-btn,
+.modal.active .next-btn {
+	opacity: 0.6;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+	background-color: transparent;
+	opacity: 1;
+}
+
+/* 반응형 스타일 추가 */
+@media (max-width: 1200px) {
+	.trainer-hero {
+		max-width: 95%;
+	}
+
+	.trainers-grid {
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+	}
+
+
+}
+
+@media (max-width: 768px) {
+	.trainer-hero {
+		height: auto;
+		min-height: 20vh;
+		margin: 30px auto;
+		padding: 46px 15px;
+		max-width: 95%;
+		box-sizing: border-box;
+
+	}
+
+	.trainer-hero::before {
+		background-size: cover;
+
+	}
+
+	.trainer-hero h1 {
+		font-size: 36px;
+	}
+
+	.trainer-hero p {
+		font-size: 18px;
+	}
+
+	.trainers-grid {
+		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+	}
+
+	.trainer-card img {
+		height: 300px;
+	}
+
+	.modal {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.modal-content-container {
+		position: relative;
+		width: 90%;
+		max-width: 400px;
+	}
+
+	.modal-content {
+		width: 100%;
+		height: auto;
+		max-height: 80vh;
+		transition: transform 0.3s ease-out;
+	}
+
+	.modal-content.swiping {
+		transition: none;
+	}
+
+	.close {
+		top: 10px;
+		right: 20px;
+		font-size: 30px;
+		display: none;
+	}
+
+	.prev-btn,
+	.next-btn {
+		display: none;
+	}
+
+	@media (max-width: 480px) {
+		.trainer-hero {
+			min-height: 20vh;
+			margin: 30px auto;
+			padding: 30px 10px;
+			max-width: 95%;
+			box-sizing: border-box;
+		}
+
+		.trainer-hero h1 {
+			font-size: 28px;
+		}
+
+		.trainer-hero p {
+			font-size: 16px;
+		}
+
+		.trainers-grid {
+			grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+			gap: 10px;
+		}
+
+		.trainer-card img {
+			height: 200px;
+		}
+
+		.modal-content-container {
+			width: 95%;
+		}
+
+		.modal-content {
+			max-height: 70vh;
+		}
+
+		.instagram-button {
+			position: absolute;
+			bottom: 15px;
+			right: 15px;
+			z-index: 1001;
+		}
+
+		.instagram-icon {
+			width: 30px;
+			height: 30px;
+		}
+
+		.close {
+			top: 5px;
+			right: 10px;
+			font-size: 24px;
+			display: none;
+		}
+
+		.prev-btn,
+		.next-btn {
+			display: none;
+		}
+	}
+}

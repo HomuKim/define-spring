@@ -1,0 +1,73 @@
+/* 전역 변수 정의 */
+:root {
+	--primary-black: #1d1d1f;
+	--secondary-black: #333336;
+	--primary-red: #fa233b;
+	--hover-red: #dc1f34;
+	--pure-white: #ffffff;
+	--off-white: #f5f5f7;
+	--shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+
+/* 푸터 스타일 */
+footer {
+	background-color: var(--primary-black);
+	color: white;
+	text-align: center;
+	padding: 30px 0;
+}
+
+.footer-content {
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.footer-content p {
+	margin: 10px 0;
+}
+
+@media (max-width: 768px) {
+	footer {
+		padding: 20px 15px;
+	}
+
+	.footer-content {
+		max-width: 100%;
+	}
+
+	.footer-content p {
+		font-size: 14px;
+		line-height: 1.6;
+		margin: 15px 0;
+	}
+}
+
+@media (max-width: 480px) {
+	footer {
+		padding: 15px 10px;
+	}
+
+	.footer-content p {
+		font-size: 12px;
+		line-height: 1.5;
+		margin: 12px 0;
+	}
+
+	.footer-content p:first-child {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.footer-content p:first-child::after {
+		content: '';
+		width: 30px;
+		height: 1px;
+	}
+
+	#adminLoginLink {
+		font-size: 11px;
+		margin-top: 20px;
+	}
+}
