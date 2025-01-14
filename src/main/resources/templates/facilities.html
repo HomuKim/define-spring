@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>시설 소개 - 디파인더바디 피트니스</title>
+	<link rel="stylesheet" href="css/facilities.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+	<div id="header"></div>
+	<main>
+		<section class="facility-hero">
+			<h1>건강한 삶을 위한 완벽한 환경</h1>
+			<p>최고의 운동 환경과 다양한 시설을 갖춘<br> 디파인더바디 피트니스에 오신 것을 환영합니다.</p>
+		</section>
+
+		<section class="facility-gallery">
+			<div class="main-image">
+				<img id="mainImage" src="images/facility1.jpg" alt="시설 메인 이미지">
+				<button class="prev">&#10094;</button>
+				<button class="next">&#10095;</button>
+			</div>
+			<div class="thumbnail-container">
+				<div class="thumbnails">
+					<img src="images/facility/facility1.jpg" alt="시설 1" class="thumbnail active">
+					<img src="images/facility/facility2.jpg" alt="시설 2" class="thumbnail">
+					<img src="images/facility/facility3.jpg" alt="시설 3" class="thumbnail">
+					<img src="images/facility/facility4.jpg" alt="시설 4" class="thumbnail">
+					<img src="images/facility/facility5.jpg" alt="시설 5" class="thumbnail">
+					<img src="images/facility/facility6.jpg" alt="시설 6" class="thumbnail">
+					<img src="images/facility/facility7.jpg" alt="시설 7" class="thumbnail">
+					<img src="images/facility/facility8.jpg" alt="시설 8" class="thumbnail">
+					<img src="images/facility/facility9.jpg" alt="시설 9" class="thumbnail">
+					<img src="images/facility/facility10.jpg" alt="시설 10" class="thumbnail">
+					<img src="images/facility/facility11.jpg" alt="시설 11" class="thumbnail">
+				</div>
+			</div>
+		</section>
+	</main>
+	<div id="footer"></div>
+	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			let currentIndex = 0;
+			const images = document.querySelectorAll('.thumbnail');
+			const mainImage = document.getElementById('mainImage');
+			let isAnimating = false;
+
+			function showImage(index) {
+				if (isAnimating) return;
+				isAnimating = true;
+
+				const mainImg = document.getElementById('mainImage');
+				mainImg.classList.add('fade-out');
+
+				setTimeout(() => {
+					mainImg.src = images[index].src;
+					mainImg.classList.remove('fade-out');
+					mainImg.classList.add('fade-in');
+
+					images.forEach((thumb, i) => {
+						thumb.classList.toggle('active', i === index);
+					});
+
+					setTimeout(() => {
+						isAnimating = false;
+						mainImg.classList.remove('fade-in');
+					}, 500);
+				}, 500);
+			}
+
+			function changeSlide(direction) {
+				if (isAnimating) return;
+
+				// 현재 메인 이미지의 src와 일치하는 썸네일 찾기
+				const currentMainSrc = mainImage.src;
+				let currentMainIndex = Array.from(images).findIndex(img => img.src === currentMainSrc);
+
+				// 찾은 인덱스가 유효하지 않으면 currentIndex 사용
+				if (currentMainIndex === -1) currentMainIndex = currentIndex;
+
+				// 다음/이전 인덱스 계산
+				let nextIndex = currentMainIndex + direction;
+
+				// 범위 체크
+				if (nextIndex >= images.length) nextIndex = 0;
+				if (nextIndex < 0) nextIndex = images.length - 1;
+
+				currentIndex = nextIndex;
+				showImage(nextIndex);
+			}
+
+			// 썸네일 클릭 이벤트
+			images.forEach((thumbnail, index) => {
+				thumbnail.addEventListener('click', () => showImage(index));
+			});
+
+			// 이전/다음 버튼 이벤트
+			document.querySelector('.prev').addEventListener('click', () => changeSlide(-1));
+			document.querySelector('.next').addEventListener('click', () => changeSlide(1));
+
+			// 초기 이미지 표시
+			showImage(0);
+		});
+
+		window.addEventListener('load', function () {
+			if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+				document.body.classList.add('admin-logged-in');
+				makeContentEditable(true);
+			}
+			$("#header").load("header.html", function () {
+				// 헤더 로드 완료 후 실행될 코드
+				if (typeof initializeHeader === 'function') {
+					initializeHeader();
+				}
+			});
+			$("#footer").load("footer.html");
+		});
+	</script>
+</body>
+
+</html>

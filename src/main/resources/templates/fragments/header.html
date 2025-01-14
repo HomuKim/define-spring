@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Header Fragment</title>
+</head>
+
+<body>
+	<header th:fragment="header">
+		<nav class="navbar">
+			<div class="logo">
+				<a href="https://www.instagram.com/define_thebody_fitness">
+					<img th:src="@{/images/logo.png}" alt="Define The Body Logo">
+				</a>
+				<a th:href="@{/}" class="logo-text">디파인더바디 피트니스</a>
+			</div>
+			<button class="menu-toggle" aria-label="메뉴 열기">
+				<span></span>
+				<span></span>
+				<span></span>
+			</button>
+			<ul class="nav-links">
+				<li><a th:href="@{/}">홈</a></li>
+				<li><a th:href="@{/intro}">인사말</a></li>
+				<li><a th:href="@{/trainers}">팀원소개</a></li>
+				<li><a th:href="@{/facilities}">시설소개</a></li>
+				<li><a th:href="@{/contact}">고객지원</a></li>
+			</ul>
+		</nav>
+	</header>
+	<div class="menu-overlay"></div>
+	<script th:src="@{/js/header.js}"></script>
+</body>
+
+</html>

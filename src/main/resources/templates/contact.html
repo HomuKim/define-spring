@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>고객지원 - 디파인더바디 피트니스</title>
+	<!-- 외부 CSS 파일 연결 -->
+	<link rel="stylesheet" href="css/contact.css">
+	<!-- Font Awesome 아이콘 라이브러리 연결 -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<!-- 네이버 지도 API 스크립트 -->
+	<script type="text/javascript"
+		src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=w4u0t9veg3"></script>
+	<!-- jQuery 라이브러리 -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<body>
+	<!-- 헤더 영역 (외부 파일에서 로드) -->
+	<div id="header"></div>
+	<main>
+		<!-- 메인 타이틀 섹션 -->
+		<section class="contact-hero">
+			<h1>언제든 문의하세요</h1>
+			<p>디파인더바디 피트니스는 여러분의 건강한 삶을 응원합니다.</p>
+		</section>
+		<section class="content-section">
+			<div class="support-container">
+				<!-- FAQ 섹션 -->
+				<div class="support-item">
+					<h2>자주 묻는 질문 (FAQ)</h2>
+					<ul class="faq-list">
+						<!-- FAQ 항목들 -->
+						<li>
+							<h3>운영 시간은 어떻게 되나요?</h3>
+							<p>평일 06:00 - 24:00 / 주말 및 공휴일 10:00 - 20:00 입니다.</p>
+						</li>
+						<li>
+							<h3>휴무는 없나요?</h3>
+							<p>명절(설, 추석) 당일과 전날 총 4일 휴무입니다.</p>
+						</li>
+						<li>
+							<h3>회원권 종류는 어떻게 되나요?</h3>
+							<p>1개월, 4개월, 7개월, 12개월 단위로 회원권을 제공하고 있습니다. 자세한 내용은 문의 바랍니다.</p>
+						</li>
+						<li>
+							<h3>개인락커와 운동복은 무료인가요?</h3>
+							<p>개인락커와 운동복은 결제 후 이용하셔야 합니다.</p>
+						</li>
+						<li>
+							<h3>PT를 결제하면 회원권은 무료인가요?</h3>
+							<p>PT와 회원권은 별도로 결제 후 이용 하셔야 합니다</p>
+						</li>
+						<!-- 추가 FAQ 항목들 -->
+					</ul>
+				</div>
+				<!-- 문의하기 섹션 -->
+				<div class="contact-section">
+					<h2 class="contact-title">문의하기</h2>
+					<div class="contact-grid">
+						<!-- 채팅 문의 -->
+						<div class="contact-item"
+							onclick="window.open('https://talk.naver.com/ct/w5u13y?frm=pnmb&frm=nmb_detail#nafullscreen')">
+							<div class="contact-icon">
+								<i class="fas fa-comments"></i>
+							</div>
+							<h3>채팅 문의</h3>
+							<p>평일 06:00 - 24:00 / 주말 및 공휴일 10:00 - 20:00</p>
+							<p>설 / 추석 연휴 제외</p>
+						</div>
+
+						<!-- 전화 문의 -->
+						<div class="contact-item">
+							<div class="contact-icon">
+								<i class="fas fa-phone"></i>
+							</div>
+							<h3>전화 문의</h3>
+							<p>010-7275-2477</p>
+							<p>평일 06:00 - 24:00 / 주말 및 공휴일 10:00 - 20:00</p>
+							<p>설 / 추석 연휴 제외</p>
+						</div>
+
+						<!-- 매장 찾기 (지도 모달 열기) -->
+						<div class="contact-item" onclick="openMap()">
+							<div class="contact-icon">
+								<i class="fas fa-map-marker-alt"></i>
+							</div>
+							<h3>매장 찾기</h3>
+						</div>
+					</div>
+				</div>
+				<!-- 지도 모달 -->
+				<div id="mapModal" class="modal">
+					<div class="modal-content">
+						<span class="close">&times;</span>
+						<div id="naverMap"></div>
+					</div>
+				</div>
+				<!-- 시설 및 운동 프로그램 안내 섹션 -->
+				<div class="support-item">
+					<h2>시설 및 운동 프로그램 안내</h2>
+					<div class="program-icons">
+						<!-- 1:1 퍼스널 트레이닝 (비디오 모달 열기) -->
+						<div class="program-icon" onclick="openVideoModal('2IC2aFmZmhU')">
+							<i class="fas fa-dumbbell"></i>
+							<h3>1:1 퍼스널 트레이닝</h3>
+							<p>전문 트레이너와 함께하는 맞춤형 <br>운동 프로그램을 경험해보세요</p>
+						</div>
+
+						<!-- 1:1 필라테스 (비디오 모달 열기) -->
+						<div class="program-icon" onclick="openVideoModal('kp95ddvwEco')">
+							<i class="fas fa-spa"></i>
+							<h3>1:1 필라테스</h3>
+							<p>코어 강화와 유연성 향상을 위한 <br>전문 필라테스 프로그램을 경험해보세요</p>
+						</div>
+
+						<!-- 시설 안내 (비디오 모달 열기) -->
+						<div class="program-icon">
+							<i class="fas fa-building"></i>
+							<h3>최고의 시설</h3>
+							<p>함께 운동하며 건강과 즐거움을 찾아가는 <br>여정을 경험해보세요</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="videoModal" class="video-modal">
+				<div class="video-modal-content">
+					<span class="close-btn">&times;</span>
+					<div class="video-container">
+						<iframe id="youtubePlayer" src="" frameborder="0" allow="autoplay; encrypted-media"
+							allowfullscreen>
+						</iframe>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+	<!-- 푸터 영역 (외부 파일에서 로드) -->
+	<div id="footer"></div>
+	<script>
+		let map;
+
+		// 지도 모달 열기 및 초기화 함수
+		function openMap() {
+			// 모달 표시 및 애니메이션 적용
+			var modal = document.getElementById("mapModal");
+			modal.style.display = "block";
+			setTimeout(() => {
+				modal.classList.add('show');
+			}, 10);
+
+			// 지도 초기화 (처음 한 번만)
+			if (!map) {
+				var lat = 37.6086138;
+				var lng = 127.0151611;
+
+				var mapOptions = {
+					center: new naver.maps.LatLng(lat, lng),
+					zoom: 15
+				};
+
+				map = new naver.maps.Map('naverMap', mapOptions);
+
+				var marker = new naver.maps.Marker({
+					position: new naver.maps.LatLng(lat, lng),
+					map: map
+				});
+
+				// 마커 클릭 시 네이버 지도로 이동
+				naver.maps.Event.addListener(marker, 'click', function () {
+					window.open("https://map.naver.com/v5/search/디파인더바디짐/place/" + lat + "," + lng);
+				});
+			}
+		}
+
+		// 지도 모달 닫기 함수
+		function closeMapModal() {
+			var modal = document.getElementById("mapModal");
+			modal.classList.add('hide');
+			modal.classList.remove('show');
+			setTimeout(() => {
+				modal.style.display = "none";
+				modal.classList.remove('hide');
+			}, 300);
+		}
+
+		// 이미지 모달 열기 함수
+		function openImageModal(imageSrc) {
+			var modal = document.getElementById("imageModal");
+			var modalImg = document.getElementById("modalImage");
+			modalImg.src = imageSrc;
+
+			modal.style.display = "block";
+			setTimeout(() => {
+				modal.classList.add('show');
+			}, 10);
+		}
+
+		// 페이지 로드 완료 시 실행되는 함수
+		document.addEventListener('DOMContentLoaded', function () {
+			var modal = document.getElementById("videoModal");
+			var player = document.getElementById("youtubePlayer");
+			var closeBtn = modal.querySelector('.close-btn');
+
+			// 비디오 모달 열기 함수
+			function openVideoModal(videoId) {
+				var modal = document.getElementById("videoModal");
+				var player = document.getElementById("youtubePlayer");
+				player.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+				modal.classList.add('show');
+			}
+
+			// 비디오 모달 닫기 함수
+			function closeVideoModal() {
+				var modal = document.getElementById("videoModal");
+				var player = document.getElementById("youtubePlayer");
+				modal.classList.remove('show');
+				player.src = "";  // 동영상 정지
+			}
+
+			// 클로즈 버튼 클릭 시 모달 닫기
+			if (closeBtn) {
+				closeBtn.onclick = closeVideoModal;
+			}
+
+			// 모달 외부 클릭 시 닫기
+			window.onclick = function (event) {
+				if (event.target == modal) {
+					closeVideoModal();
+				}
+			}
+
+			// openVideoModal 함수를 전역 스코프에 노출
+			window.openVideoModal = openVideoModal;
+		});
+
+		// 이미지 모달 닫기 함수
+		function closeImageModal() {
+			var modal = document.getElementById("imageModal");
+			modal.classList.add('hide');
+			modal.classList.remove('show');
+			setTimeout(() => {
+				modal.style.display = "none";
+				modal.classList.remove('hide');
+			}, 300);
+		}
+
+		// jQuery를 사용한 페이지 초기화
+		$(document).ready(function () {
+			// 네이버맵 모달 관련
+			$('#mapModal .close').on('click', closeMapModal);
+
+			// 이미지 모달 관련
+			$('#imageModal .close').on('click', closeImageModal);
+
+			// 모달 외부 클릭 시 닫기
+			$(window).on('click', function (event) {
+				var mapModal = document.getElementById("mapModal");
+				var imageModal = document.getElementById("imageModal");
+
+				if (event.target == mapModal) {
+					closeMapModal();
+				}
+				if (event.target == imageModal) {
+					closeImageModal();
+				}
+			});
+
+			// 채팅 문의 클릭 이벤트
+			$('.contact-item:first-child').on('click', function () {
+				window.open('https://talk.naver.com/ct/w5u13y?frm=pnmb&frm=nmb_detail#nafullscreen');
+			});
+
+			// 관리자 로그인 확인 및 헤더/푸터 로드
+			if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+				$('body').addClass('admin-logged-in');
+				makeContentEditable(true);
+			}
+			$("#header").load("header.html", function () {
+				// 헤더 로드 완료 후 실행될 코드
+				if (typeof initializeHeader === 'function') {
+					initializeHeader();
+				}
+			});
+			$("#footer").load("footer.html");
+		});
+	</script>
+</body>
+
+</html>

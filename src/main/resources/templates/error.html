@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>준비 중 - 디파인더바디 피트니스</title>
+	<link rel="stylesheet" href="css/contact.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<style>
+	.cta-button {
+		background-color: var(--primary-red);
+		color: white;
+		padding: 12px 24px;
+		font-size: 16px;
+		font-weight: 600;
+		border-radius: 20px;
+		border: none;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+		text-decoration: none;
+	}
+
+	.cta-button:hover {
+		background-color: var(--hover-red);
+	}
+</style>
+
+<body>
+	<div id="header"></div>
+	<main>
+		<section class="contact-hero">
+			<h1>준비 중</h1>
+			<p>이 페이지는 현재 준비 중입니다. 불편을 드려 죄송합니다.</p>
+			<a href="index.html" class="cta-button">홈으로 돌아가기</a>
+		</section>
+	</main>
+	<div id="footer"></div>
+	<script>
+		window.addEventListener('load', function () {
+			$("#header").load("header.html", function () {
+				// 헤더 로드 완료 후 실행될 코드
+				initializeHeader();
+			});
+			$("#footer").load("footer.html");
+		});
+	</script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+
+</html>
