@@ -10,6 +10,11 @@ public class PageController {
 		return "index";
 	}
 
+	@GetMapping("/event")
+	public String event() {
+		return "event";
+	}
+
 	@GetMapping("/intro")
 	public String intro() {
 		return "intro";
