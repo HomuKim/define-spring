@@ -6,4 +6,18 @@
 			<span style="text-decoration: underline;">디파인더바디 피트니스</span>. All rights reserved.
 		</p>
 	</div>
+
+	<!-- 관리자 로그인 모달 -->
+	<div id="adminLoginModal" class="modal">
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<h2>관리자 로그인</h2>
+			<form id="adminLoginForm">
+				<input type="password" id="adminPassword" placeholder="비밀번호를 입력하세요" required>
+				<button type="submit">로그인</button>
+			</form>
+		</div>
+	</div>
+
+	<script th:src="@{/js/admin-login.js}"></script>
 </footer>

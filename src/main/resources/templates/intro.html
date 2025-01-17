@@ -22,17 +22,19 @@
 
 		<section class="intro-gallery">
 			<div class="intro-buttons">
-				<button class="intro-button active" data-role="ceo">CEO 전혜성</button>
-				<button class="intro-button" data-role="manager">MANAGER 김호연</button>
+				<button class="intro-button active" data-role="ceo"
+					th:text="${ceoMessage != null ? ceoMessage.role : 'CEO'}">CEO</button>
+				<button class="intro-button" data-role="manager"
+					th:text="${managerMessage != null ? managerMessage.role : 'MANAGER'}">MANAGER</button>
 			</div>
 			<div class="intro-content">
 				<div class="main-image">
-					<img id="mainImage" src="images/ceo.jpg" alt="인사말 이미지" width="400" height="600">
+					<img id="mainImage" th:src="@{${ceoMessage.imageUrl}}" alt="인사말 이미지" width="400" height="600">
 				</div>
 				<div class="intro-text">
-					<h2 id="introTitle">CEO 인사말</h2>
+					<h2 id="introTitle" th:utext="${ceoMessage.role + ' 디파인더바디'}">CEO 디파인더바디</h2>
 					<div class="text-container">
-						<p id="introText"></p>
+						<p id="introText" th:utext="${ceoMessage.message}"></p>
 					</div>
 				</div>
 			</div>
@@ -40,6 +42,14 @@
 	</main>
 	<div th:replace="~{fragments/footer :: footer}"></div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		var introData = {
+			ceo: /*[[${ceoMessage}]]*/ {},
+			manager: /*[[${managerMessage}]]*/ {}
+		};
+        /*]]>*/
+	</script>
 	<script th:src="@{/js/intro.js}"></script>
 </body>
 

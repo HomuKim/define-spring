@@ -19,62 +19,22 @@
 		</section>
 
 		<section class="trainers-grid">
-			<div class="trainer-card" data-instagram="https://www.instagram.com/define_thebody_leader">
-				<img src="images/member/trainer1-thumbnail.jpg?v=1" alt="트레이너 1" class="trainer-image">
-				<img src="images/member/trainer1-full.jpg?v=1" alt="트레이너1 전체 사진" class="trainer-full-image"
+			<div th:each="trainer : ${trainers}" class="trainer-card"
+				th:data-instagram="${trainer.instagramUrl != null ? trainer.instagramUrl : ''}">
+				<img th:src="${trainer.thumbnailImage}" th:alt="${trainer.name}" class="trainer-image">
+				<img th:src="${trainer.fullImage}" th:alt="${trainer.name} + ' 전체 사진'" class="trainer-full-image"
 					style="display: none;">
 			</div>
-			<div class="trainer-card" data-instagram="https://www.instagram.com/define_thebody_joo">
-				<img src="images/member/trainer2-thumbnail.jpg?v=1" alt="트레이너 2" class="trainer-image">
-				<img src="images/member/trainer2-full.jpg?v=1" alt="트레이너 2 전체 사진" class="trainer-full-image"
-					style="display: none;">
-			</div>
-			<div class="trainer-card" data-instagram="https://www.instagram.com/define_thebody_kwon">
-				<img src="images/member/trainer3-thumbnail.jpg" alt="트레이너 3" class="trainer-image">
-				<img src="images/member/trainer3-full.jpg" alt="트레이너 3 전체 사진" class="trainer-full-image"
-					style="display: none;">
-			</div>
-			<div class="trainer-card" data-instagram="https://www.instagram.com/woosungpark4">
-				<img src="images/member/trainer4-thumbnail.jpg" alt="트레이너 4" class="trainer-image">
-				<img src="images/member/trainer4-full.jpg" alt="트레이너 4 전체 사진" class="trainer-full-image"
-					style="display: none;">
-			</div>
-			<div class="trainer-card" data-instagram="https://www.instagram.com/define_thebody_han">
-				<img src="images/member/trainer5-thumbnail.jpg" alt="트레이너 5" class="trainer-image">
-				<img src="images/member/trainer5-full.jpg" alt="트레이너 5 전체 사진" class="trainer-full-image"
-					style="display: none;">
-			</div>
-			<div class="trainer-card" data-instagram="https://www.instagram.com/define_thebody_wang">
-				<img src="images/member/trainer6-thumbnail.jpg" alt="트레이너 6" class="trainer-image">
-				<img src="images/member/trainer6-full.jpg" alt="트레이너 6 전체 사진" class="trainer-full-image"
-					style="display: none;">
-			</div>
-			<div class="trainer-card" data-instagram="https://www.instagram.com/define_thebody_kim_">
-				<img src="images/member/trainer7-thumbnail.jpg" alt="트레이너 7" class="trainer-image">
-				<img src="images/member/trainer7-full.jpg" alt="트레이너 7 전체 사진" class="trainer-full-image"
-					style="display: none;">
-			</div>
-			<div class="trainer-card" data-instagram="https://www.instagram.com/ri0___0ha">
-				<img src="images/member/trainer8-thumbnail.png" alt="트레이너 8" class="trainer-image">
-				<img src="images/member/trainer8-full.png" alt="트레이너 8 전체 사진" class="trainer-full-image"
-					style="display: none;">
-			</div>
-			<div class="trainer-card" data-instagram="https://www.instagram.com/eu____b">
-				<img src="images/member/trainer9-thumbnail.jpg" alt="트레이너 9" class="trainer-image">
-				<img src="images/member/trainer9-full.jpg" alt="트레이너 9 전체 사진" class="trainer-full-image"
-					style="display: none;">
-			</div>
-			<!-- 필요에 따라 더 많은 트레이너 카드를 추가 -->
 		</section>
 	</main>
 	<div th:replace="~{fragments/footer :: footer}"></div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script th:src="@{/js/trainers.js}"></script>
-	<div id="imageModal" class="modal">
-		<span class="close">&times;</span>
+	<div id="imageModal" class="trainer-modal">
+		<span class="trainer-modal-close">&times;</span>
 		<button class="prev-btn">&lt;</button>
-		<div class="modal-content-container">
-			<img class="modal-content" id="modalImage">
+		<div class="trainer-modal-content-container">
+			<img class="trainer-modal-content" id="modalImage">
 			<a id="instagramLink" class="instagram-button" target="_blank">
 				<img src="images/instagram-icon.png" alt="Instagram" class="instagram-icon">
 			</a>

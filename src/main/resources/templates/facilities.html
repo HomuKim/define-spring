@@ -20,23 +20,14 @@
 
 		<section class="facility-gallery">
 			<div class="main-image">
-				<img id="mainImage" src="images/facility1.jpg" alt="시설 메인 이미지">
+				<img id="mainImage" th:src="@{/images/facility/facility1.jpg}" alt="시설 메인 이미지">
 				<button class="prev">&#10094;</button>
 				<button class="next">&#10095;</button>
 			</div>
 			<div class="thumbnail-container">
 				<div class="thumbnails">
-					<img src="images/facility/facility1.jpg" alt="시설 1" class="thumbnail active">
-					<img src="images/facility/facility2.jpg" alt="시설 2" class="thumbnail">
-					<img src="images/facility/facility3.jpg" alt="시설 3" class="thumbnail">
-					<img src="images/facility/facility4.jpg" alt="시설 4" class="thumbnail">
-					<img src="images/facility/facility5.jpg" alt="시설 5" class="thumbnail">
-					<img src="images/facility/facility6.jpg" alt="시설 6" class="thumbnail">
-					<img src="images/facility/facility7.jpg" alt="시설 7" class="thumbnail">
-					<img src="images/facility/facility8.jpg" alt="시설 8" class="thumbnail">
-					<img src="images/facility/facility9.jpg" alt="시설 9" class="thumbnail">
-					<img src="images/facility/facility10.jpg" alt="시설 10" class="thumbnail">
-					<img src="images/facility/facility11.jpg" alt="시설 11" class="thumbnail">
+					<img th:each="facility, iterStat : ${facilities}" th:src="@{${facility.imageUrl}}"
+						th:alt="${facility.name}" class="thumbnail" th:classappend="${iterStat.first} ? 'active' : ''">
 				</div>
 			</div>
 		</section>

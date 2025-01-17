@@ -17,31 +17,6 @@ window.addEventListener('load', function() {
 
 	resetModal();
 
-	// 이미지 존재 여부 확인 및 카드 표시/숨김 처리
-	trainerCards.forEach(card => {
-		const thumbnailImg = card.querySelector('.trainer-image');
-		const fullImg = card.querySelector('.trainer-full-image');
-
-		function checkImage(img) {
-			return new Promise((resolve) => {
-				if (img.complete) {
-					resolve(img.naturalHeight !== 0);
-				} else {
-					img.onload = () => resolve(true);
-					img.onerror = () => resolve(false);
-				}
-			});
-		}
-
-		Promise.all([checkImage(thumbnailImg), checkImage(fullImg)])
-			.then(([thumbnailExists, fullExists]) => {
-				if (!thumbnailExists || !fullExists) {
-					card.style.display = 'none';
-				}
-			})
-			.catch(error => console.error('Error checking images:', error));
-	});
-
 	trainerCards.forEach(function(card, index) {
 		card.onclick = function() {
 			currentTrainerIndex = index;
@@ -51,14 +26,7 @@ window.addEventListener('load', function() {
 
 	function openModal(card) {
 		var fullImage = card.querySelector('.trainer-full-image');
-
-		if (fullImage.complete) {
-			showModal(fullImage);
-		} else {
-			fullImage.onload = function() {
-				showModal(fullImage);
-			};
-		}
+		showModal(fullImage);
 	}
 
 	function showModal(fullImage) {
@@ -172,30 +140,4 @@ window.addEventListener('load', function() {
 		}
 		modalContentContainer.style.transform = '';
 	});
-
-	// 헤더와 푸터 로드
-	// 헤더 로드
-	fetch('header.html')
-		.then(response => response.text())
-		.then(data => {
-			document.getElementById('header').innerHTML = data;
-			// 스크립트 태그 내의 코드를 실행
-			const scriptTags = document.getElementById('header').getElementsByTagName('script');
-			for (let i = 0; i < scriptTags.length; i++) {
-				eval(scriptTags[i].innerText);
-			}
-			// initializeHeader 함수가 있다면 실행
-			if (typeof initializeHeader === 'function') {
-				initializeHeader();
-			}
-		})
-		.catch(error => console.error('Error loading header:', error));
-
-	// 푸터 로드
-	fetch('footer.html')
-		.then(response => response.text())
-		.then(data => {
-			document.getElementById('footer').innerHTML = data;
-		})
-		.catch(error => console.error('Error loading footer:', error));
 });
