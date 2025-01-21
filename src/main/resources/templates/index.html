@@ -24,17 +24,17 @@
 		</section>
 
 		<section class="content-section">
-			<div class="event-banner">
+			<div class="event-banner" th:if="${not #lists.isEmpty(events)}">
 				<div class="slider">
-					<img th:src="@{/images/event/event-banner1.png}" alt="이벤트 배너1" class="event-image editable">
-					<img th:src="@{/images/event/event-banner2.jpg}" alt="이벤트 배너2" class="event-image editable">
-					<img th:src="@{/images/event/event-banner3.jpg}" alt="이벤트 배너3" class="event-image editable">
-					<img th:src="@{/images/event/event-banner4.jpg}" alt="이벤트 배너4" class="event-image editable">
+					<img th:each="event : ${events}" th:src="@{${event.image}}" th:alt="${event.title}"
+						class="event-image editable">
+					<button class="prev-btn" th:if="${#lists.size(events) > 1}">&#10094;</button>
+					<button class="next-btn" th:if="${#lists.size(events) > 1}">&#10095;</button>
 				</div>
 			</div>
 
 			<div class="feature-cards">
-				<a th:href="@{/event}" class="card">
+				<a th:href="@{/events}" class="card">
 					<h3 class="editable" contenteditable="false">이벤트</h3>
 					<p class="editable" contenteditable="false">디파인더바디만의 <br>다양한 이벤트와 프로모션을 확인하세요</p>
 				</a>
@@ -58,6 +58,11 @@
 
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script th:src="@{/js/index.js}"></script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		window.serverEvents = /*[[${events}]]*/[];
+	       /*]]>*/
+	</script>
 </body>
 
 </html>

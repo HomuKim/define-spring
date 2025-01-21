@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>이벤트 - 디파인더바디 피트니스</title>
+	<link rel="stylesheet" th:href="@{/css/events.css}">
+	<link rel="stylesheet" th:href="@{/css/header.css}">
+	<link rel="stylesheet" th:href="@{/css/footer.css}">
+</head>
+
+<body>
+	<div th:replace="~{fragments/header :: header}"></div>
+	<main>
+		<section class="event-hero">
+			<h1>목표 달성의 부스터, 지금 시작됩니다</h1>
+			<p>회원님들을 위한 특별한 이벤트를 확인하세요</p>
+		</section>
+
+		<section class="event-content" th:if="${not #lists.isEmpty(events)}">
+			<div class="event-image">
+				<img id="eventImage" th:src="@{${events[0].image}}" alt="이벤트 이미지">
+				<button class="prev-btn" th:if="${#lists.size(events) > 1}">&#10094;</button>
+				<button class="next-btn" th:if="${#lists.size(events) > 1}">&#10095;</button>
+			</div>
+			<div class="event-description">
+				<h2 id="eventTitle" th:text="${events[0].title}">이벤트 제목</h2>
+				<p id="eventDescription" th:utext="${events[0].description}">이벤트 설명</p>
+			</div>
+		</section>
+	</main>
+	<div th:replace="~{fragments/footer :: footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script th:src="@{/js/events.js}"></script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		window.serverEvents = /*[[${events}]]*/[];
+        /*]]>*/
+	</script>
+</body>
+
+</html>

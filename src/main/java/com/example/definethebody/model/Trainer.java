@@ -21,21 +21,4 @@ public class Trainer {
 	private String fullImage;
 	private String thumbnailImage;
 	private String instagramUrl;
-
-	public String getName() {
-		return this.name;
-	}
-
-	public String getFullImage() {
-		return this.fullImage;
-	}
-
-	public String getThumbnailImage() {
-		return this.thumbnailImage;
-	}
-
-	public String getInstagramUrl() {
-		return this.instagramUrl;
-	}
-
 }

@@ -1,62 +1,52 @@
-// 슬라이드 인덱스 초기화
-let slideIndex = 0;
-const slides = document.querySelectorAll('.event-image');
+document.addEventListener('DOMContentLoaded', function() {
+	const slides = document.querySelectorAll('.event-image');
+	const prevBtn = document.querySelector('.prev-btn');
+	const nextBtn = document.querySelector('.next-btn');
+	let currentSlide = 0;
+	let slideInterval;
 
-// 유효한 이미지만 필터링하는 함수
-function filterValidImages() {
-	return Array.from(slides).filter(slide => {
-		return slide.complete && slide.naturalHeight !== 0;
-	});
-}
-
-// 슬라이드쇼 기능
-function showSlides() {
-	const validSlides = filterValidImages();
-
-	if (validSlides.length === 0) return;
-
-	// 모든 슬라이드 숨기기
-	validSlides.forEach(slide => {
-		slide.style.display = "none";
-		slide.classList.remove('active');
-	});
-
-	// 다음 슬라이드 표시
-	slideIndex++;
-	if (slideIndex > validSlides.length) {
-		slideIndex = 1;
+	function showSlide(index) {
+		slides.forEach(slide => slide.classList.remove('active'));
+		slides[index].classList.add('active');
 	}
 
-	validSlides[slideIndex - 1].style.display = "block";
-	validSlides[slideIndex - 1].classList.add('active');
+	function nextSlide() {
+		currentSlide = (currentSlide + 1) % slides.length;
+		showSlide(currentSlide);
+	}
 
-	// 7초 후 다음 슬라이드로 전환
-	setTimeout(showSlides, 7000);
-}
+	function prevSlide() {
+		currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+		showSlide(currentSlide);
+	}
 
-// 이미지 로드 오류 처리
-slides.forEach(slide => {
-	slide.onerror = function() {
-		this.remove(); // 오류 발생 시 해당 이미지 요소를 제거
-	};
-});
+	function startSlideShow() {
+		stopSlideShow(); // 기존 인터벌 제거
+		slideInterval = setInterval(nextSlide, 15000); // 15초마다 슬라이드 전환
+	}
 
-// 콘텐츠 편집 가능 상태 변경 함수
-function makeContentEditable(editable) {
-	const editableElements = document.querySelectorAll('.editable');
-	editableElements.forEach(el => el.contentEditable = editable);
-}
+	function stopSlideShow() {
+		if (slideInterval) {
+			clearInterval(slideInterval);
+		}
+	}
 
-// 이미지 로드 완료 후 슬라이드쇼 시작
-Promise.all(Array.from(slides).map(img => {
-	if (img.complete) return Promise.resolve();
-	return new Promise(resolve => {
-		img.onload = resolve;
-		img.onerror = () => {
-			img.remove();
-			resolve();
-		};
+	// 초기 슬라이드 표시 및 자동 슬라이드 시작
+	showSlide(currentSlide);
+	startSlideShow();
+
+	// 버튼 이벤트 리스너
+	prevBtn.addEventListener('click', () => {
+		prevSlide();
+		startSlideShow(); // 버튼 클릭 후 자동 슬라이드 재시작
 	});
-})).then(() => {
-	showSlides();
+
+	nextBtn.addEventListener('click', () => {
+		nextSlide();
+		startSlideShow(); // 버튼 클릭 후 자동 슬라이드 재시작
+	});
+
+	// 마우스 호버 시 자동 슬라이드 정지
+	document.querySelector('.event-banner').addEventListener('mouseenter', stopSlideShow);
+	document.querySelector('.event-banner').addEventListener('mouseleave', startSlideShow);
 });

@@ -13,19 +13,12 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Facility {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	private String name;
 	private String imageUrl;
-
-	public String getName() {
-		return this.name;
-	}
-
-	public String getImageUrl() {
-		return this.imageUrl;
-	}
 
 }
