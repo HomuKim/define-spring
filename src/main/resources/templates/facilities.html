@@ -8,6 +8,7 @@
 	<link rel="stylesheet" th:href="@{/css/facilities.css}">
 	<link rel="stylesheet" th:href="@{/css/header.css}">
 	<link rel="stylesheet" th:href="@{/css/footer.css}">
+	<link rel="stylesheet" th:href="@{/css/admin-login.css}">
 </head>
 
 <body>
@@ -18,6 +19,18 @@
 			<p>최고의 운동 환경과 다양한 시설을 갖춘<br> 디파인더바디 피트니스에 오신 것을 환영합니다.</p>
 		</section>
 
+		<div id="editModal" class="modal" style="display: none;">
+			<div class="modal-content">
+				<span class="close">&times;</span>
+				<h2>시설 정보 수정</h2>
+				<form id="editForm">
+					<input type="text" id="editTitle" placeholder="제목">
+					<textarea id="editDescription" placeholder="설명"></textarea>
+					<button type="submit">저장</button>
+				</form>
+			</div>
+		</div>
+		
 		<section class="facility-gallery">
 			<div class="main-image">
 				<img id="mainImage" th:src="@{/images/facility/facility1.jpg}" alt="시설 메인 이미지">

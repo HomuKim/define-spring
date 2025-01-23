@@ -16,6 +16,7 @@ import com.example.definethebody.service.FacilityService;
 import com.example.definethebody.service.IntroService;
 import com.example.definethebody.service.TrainerService;
 
+// 웹 페이지 요청을 처리하는 컨트롤러 클래스
 @Controller
 public class PageController {
 
@@ -28,6 +29,7 @@ public class PageController {
 	@Autowired
 	private FacilityService facilityService;
 
+// 홈페이지 요청 처리
 	@GetMapping("/")
 	public String home(Model model) {
 		List<Event> events = eventService.getAllEvents();
@@ -35,15 +37,16 @@ public class PageController {
 		return "index";
 	}
 
+// 이벤트 페이지 요청 처리
 	@GetMapping("/events")
 	public String showEvents(Model model) {
 		List<Event> events = eventService.getAllEvents();
 		model.addAttribute("events", events);
 
-		// 전체 이벤트 리스트 출력
+		// 전체 이벤트 리스트 출력 (디버깅 용도)
 		System.out.println("모든 이벤트: " + events);
 
-		// 이벤트의 세부 정보 출력
+		// 이벤트의 세부 정보 출력 (디버깅 용도)
 		for (Event event : events) {
 			System.out.println("이벤트 ID: " + event.getId());
 			System.out.println("이벤트 제목: " + event.getTitle());
@@ -55,11 +58,13 @@ public class PageController {
 		return "events";
 	}
 
+// 소개 페이지 요청 처리
 	@GetMapping("/intro")
 	public String intro(Model model) {
 		IntroMessage ceoMessage = introService.getCeoMessage();
 		IntroMessage managerMessage = introService.getManagerMessage();
 
+		// CEO와 매니저 메시지를 모델에 추가, 없으면 빈 객체 추가
 		model.addAttribute("ceoMessage", ceoMessage != null ? ceoMessage : new IntroMessage(null, null, null, null));
 		model.addAttribute("managerMessage",
 				managerMessage != null ? managerMessage : new IntroMessage(null, null, null, null));
@@ -67,12 +72,13 @@ public class PageController {
 		return "intro";
 	}
 
+// 트레이너 페이지 요청 처리
 	@GetMapping("/trainers")
 	public String trainers(Model model) {
-		// 트레이너 데이터 로딩
 		List<Trainer> trainers = trainerService.getAllTrainers();
 		model.addAttribute("trainers", trainers);
 
+		// 트레이너 정보 출력 (디버깅 용도)
 		System.out.println("모든 트레이너: " + trainers);
 
 		for (Trainer trainer : trainers) {
@@ -86,6 +92,7 @@ public class PageController {
 		return "trainers";
 	}
 
+// 시설 페이지 요청 처리
 	@GetMapping("/facilities")
 	public String showFacilities(Model model) {
 		List<Facility> facilities = facilityService.getAllFacilities();
@@ -93,6 +100,8 @@ public class PageController {
 		return "facilities";
 	}
 
+
+// 고객지원 페이지 요청 처리
 	@GetMapping("/contact")
 	public String contact() {
 		return "contact";
