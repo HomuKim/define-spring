@@ -1,15 +1,18 @@
-// 관리자 로그인 상태 확인 및 수정 버튼 표시
-function checkAdminStatus() {
-	if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-		document.querySelector('.edit-button').style.display = 'block';
-	}
-}
-
 document.addEventListener('DOMContentLoaded', function() {
 	let currentIndex = 0;
 	const images = document.querySelectorAll('.thumbnail');
 	const mainImage = document.getElementById('mainImage');
 	let isAnimating = false;
+	let isEditMode = false;
+
+	function addTimestamp(url) {
+		return url.split('?')[0] + '?t=' + new Date().getTime();
+	}
+
+	// 모든 이미지에 타임스탬프 추가
+	images.forEach(img => {
+		img.src = addTimestamp(img.src);
+	});
 
 	function showImage(index) {
 		if (isAnimating) return;
@@ -18,7 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		mainImage.classList.add('fade-out');
 
 		setTimeout(() => {
-			mainImage.src = images[index].src;
+			mainImage.src = addTimestamp(images[index].src);
+			mainImage.alt = images[index].alt;
+			mainImage.dataset.id = images[index].dataset.id;
 			mainImage.classList.remove('fade-out');
 			mainImage.classList.add('fade-in');
 
@@ -34,10 +39,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	function changeSlide(direction) {
-		if (isAnimating) return;
+		if (isAnimating || isEditMode) return;
 
-		const currentMainSrc = mainImage.src;
-		let currentMainIndex = Array.from(images).findIndex(img => img.src === currentMainSrc);
+		const currentMainSrc = mainImage.src.split('?')[0];
+		let currentMainIndex = Array.from(images).findIndex(img => img.src.split('?')[0] === currentMainSrc);
 
 		if (currentMainIndex === -1) currentMainIndex = currentIndex;
 
@@ -52,76 +57,82 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// 썸네일 클릭 이벤트
 	images.forEach((thumbnail, index) => {
-		thumbnail.addEventListener('click', () => showImage(index));
+		thumbnail.addEventListener('click', () => {
+			if (!isEditMode) {
+				showImage(index);
+			} else {
+				const fileInput = thumbnail.closest('.thumbnail-wrapper').querySelector('.image-upload');
+				fileInput.click();
+			}
+		});
 	});
+
 
 	// 이전/다음 버튼 이벤트
 	document.querySelector('.prev').addEventListener('click', () => changeSlide(-1));
 	document.querySelector('.next').addEventListener('click', () => changeSlide(1));
 
 	// 관리자 기능 관련 코드
+	function checkAdminStatus() {
+		if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+			document.getElementById('editButton').style.display = 'block';
+		}
+	}
+
 	checkAdminStatus();
 
-	document.querySelector('.edit-button').addEventListener('click', function() {
-		document.getElementById('editModal').style.display = 'block';
-		document.getElementById('editName').value = document.querySelector('.facility-hero h1').textContent;
-		document.getElementById('editDescription').value = document.querySelector('.facility-hero p').textContent;
-		document.getElementById('editImageUrl').value = mainImage.src;
+	// 수정 모드 버튼 이벤트
+	document.getElementById('editButton').addEventListener('click', function() {
+		isEditMode = !isEditMode;
+		this.textContent = isEditMode ? '보기 모드' : '수정 모드';
+		document.body.classList.toggle('edit-mode', isEditMode);
+
+		// 파일 입력 필드의 pointer-events 속성 조절
+		document.querySelectorAll('.image-upload').forEach(input => {
+			input.style.pointerEvents = isEditMode ? 'auto' : 'none';
+		});
 	});
 
-	document.querySelector('.close').addEventListener('click', function() {
-		document.getElementById('editModal').style.display = 'none';
-	});
+	// 파일 선택 시 이벤트
+	document.querySelectorAll('.image-upload').forEach(input => {
+		input.addEventListener('change', function(e) {
+			const file = e.target.files[0];
+			const thumbnail = this.previousElementSibling;
 
-	document.getElementById('editForm').addEventListener('submit', function(e) {
-		e.preventDefault();
-		const newName = document.getElementById('editName').value;
-		const newDescription = document.getElementById('editDescription').value;
-		const newImageUrl = document.getElementById('editImageUrl').value;
+			if (file) {
+				const formData = new FormData();
+				formData.append('image', file);
+				const facilityId = thumbnail.dataset.id;
+				if (!facilityId) {
+					alert('시설 ID를 찾을 수 없습니다.');
+					return;
+				}
+				formData.append('facilityId', facilityId);
 
-		fetch('/api/update-facility', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				// 필요한 경우 인증 토큰 추가
-				// 'Authorization': 'Bearer ' + sessionStorage.getItem('adminToken')
-			},
-			body: JSON.stringify({
-				name: newName,
-				description: newDescription,
-				imageUrl: newImageUrl
-			})
-		})
-			.then(response => {
-				if (!response.ok) {
-					throw new Error('Network response was not ok');
-				}
-				return response.json();
-			})
-			.then(data => {
-				if (data.success) {
-					// UI 업데이트
-					document.querySelector('.facility-hero h1').textContent = newName;
-					document.querySelector('.facility-hero p').textContent = newDescription;
-					mainImage.src = newImageUrl;
-					document.getElementById('editModal').style.display = 'none';
-					alert('시설 정보가 성공적으로 업데이트되었습니다.');
-				} else {
-					alert('시설 정보 업데이트에 실패했습니다: ' + data.message);
-				}
-			})
-			.catch(error => {
-				console.error('Error:', error);
-				alert('시설 정보 업데이트 중 오류가 발생했습니다.');
-			});
+				fetch('/facilities/update-image', {
+					method: 'POST',
+					body: formData
+				})
+					.then(response => response.json())
+					.then(data => {
+						if (data.success) {
+							thumbnail.src = addTimestamp(data.newImageUrl);
+							if (mainImage.dataset.id === thumbnail.dataset.id) {
+								mainImage.src = addTimestamp(data.newImageUrl);
+							}
+							alert('이미지가 성공적으로 업데이트되었습니다.');
+						} else {
+							alert('이미지 업데이트에 실패했습니다: ' + data.message);
+						}
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						alert('이미지 업로드 중 오류가 발생했습니다.');
+					});
+			}
+		});
 	});
 
 	// 초기 이미지 표시
 	showImage(0);
-});
-
-window.addEventListener('load', function() {
-	if (sessionStorage.getItem('adminLoggedIn') === 'true') {
-		document.body.classList.add('admin-logged-in');
-	}
 });

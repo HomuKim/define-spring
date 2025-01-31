@@ -1,11 +1,16 @@
 package com.example.definethebody.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.definethebody.model.Event;
 import com.example.definethebody.model.Facility;
@@ -100,6 +105,19 @@ public class PageController {
 		return "facilities";
 	}
 
+// 시설 페이지 수정 처리
+	@PostMapping("/facilities/update-image")
+	public ResponseEntity<?> updateFacilityImage(@RequestParam("image") MultipartFile file,
+			@RequestParam("facilityId") Long facilityId) {
+		try {
+			Facility updatedFacility = facilityService.updateFacilityImage(facilityId, file);
+			String newImageUrl = updatedFacility.getImageUrl() + "?t=" + System.currentTimeMillis(); // 타임스탬프 추가
+			return ResponseEntity.ok().body(Map.of("success", true, "newImageUrl", newImageUrl));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest()
+					.body(Map.of("success", false, "message", "Failed to update facility image: " + e.getMessage()));
+		}
+	}
 
 // 고객지원 페이지 요청 처리
 	@GetMapping("/contact")

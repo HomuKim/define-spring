@@ -20,5 +20,4 @@ public class Facility {
 
 	private String name;
 	private String imageUrl;
-
 }

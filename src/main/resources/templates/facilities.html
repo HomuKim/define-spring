@@ -17,32 +17,23 @@
 		<section class="facility-hero">
 			<h1>건강한 삶을 위한 완벽한 환경</h1>
 			<p>최고의 운동 환경과 다양한 시설을 갖춘<br> 디파인더바디 피트니스에 오신 것을 환영합니다.</p>
-			<button class="edit-button" style="display: none;">수정</button>
+			<button id="editButton" style="display: none;">수정 모드</button>
 		</section>
-
-		<div id="editModal" class="edit-Modal" style="display: none;">
-			<div class="edit-modal-content">
-				<span class="close">&times;</span>
-				<h2>시설 정보 수정</h2>
-				<form id="editForm">
-					<input type="text" id="editName" placeholder="제목">
-					<textarea id="editDescription" placeholder="설명"></textarea>
-					<input type="text" id="editImageUrl" placeholder="이미지 URL">
-					<button type="submit">저장</button>
-				</form>
-			</div>
-		</div>
 
 		<section class="facility-gallery">
 			<div class="main-image">
-				<img id="mainImage" th:src="@{/images/facility/facility1.jpg}" alt="시설 메인 이미지">
+				<img id="mainImage" th:src="@{${facilities[0].imageUrl}}" th:alt="${facilities[0].name}">
 				<button class="prev">&#10094;</button>
 				<button class="next">&#10095;</button>
 			</div>
 			<div class="thumbnail-container">
 				<div class="thumbnails">
-					<img th:each="facility, iterStat : ${facilities}" th:src="@{${facility.imageUrl}}"
-						th:alt="${facility.name}" class="thumbnail" th:classappend="${iterStat.first} ? 'active' : ''">
+					<div th:each="facility, iterStat : ${facilities}" class="thumbnail-wrapper">
+						<img th:src="@{${facility.imageUrl} + '?t=' + ${#dates.createNow().getTime()}}"
+							th:alt="${facility.name}" class="thumbnail"
+							th:classappend="${iterStat.first} ? 'active' : ''" th:data-id="${facility.id}">
+						<input type="file" class="image-upload" style="display: none;">
+					</div>
 				</div>
 			</div>
 		</section>
