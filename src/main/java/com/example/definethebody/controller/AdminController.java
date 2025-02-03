@@ -1,44 +1,36 @@
 package com.example.definethebody.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
+//AdminController.java
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.definethebody.service.AdminService;
 
 import jakarta.servlet.http.HttpSession;
-
-import java.util.Map;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/admin")
+@RequiredArgsConstructor
 public class AdminController {
 
-	@Autowired
-	private AdminService adminService;
+	private final AdminService adminService;
+	private final BCryptPasswordEncoder passwordEncoder;
 
 	@PostMapping("/login")
-	public ResponseEntity<?> adminLogin(@RequestBody Map<String, String> loginRequest, HttpSession session) {
-		String username = loginRequest.get("username");
-		String password = loginRequest.get("password");
-
-		if (adminService.authenticateAdmin(username, password)) {
+	public ResponseEntity<?> adminLogin(@Valid @RequestBody LoginRequest request, HttpSession session) {
+		if (adminService.authenticateAdmin(request.username(), request.password())) {
 			session.setAttribute("adminLoggedIn", true);
-			return ResponseEntity.ok().body(Map.of("success", true));
-		} else {
-			return ResponseEntity.ok().body(Map.of("success", false, "message", "Invalid credentials"));
+			return ResponseEntity.ok(Map.of("success", true));
 		}
+		return ResponseEntity.status(401).body(Map.of("error", "인증 실패"));
 	}
 
-	@GetMapping("/status")
-	public ResponseEntity<?> checkAdminStatus(HttpSession session) {
-		Boolean isAdmin = (Boolean) session.getAttribute("adminLoggedIn");
-		return ResponseEntity.ok().body(Map.of("isAdmin", isAdmin != null && isAdmin));
-	}
-
-	@PostMapping("/logout")
-	public ResponseEntity<?> adminLogout(HttpSession session) {
-		session.removeAttribute("adminLoggedIn");
-		return ResponseEntity.ok().body(Map.of("success", true));
+	public record LoginRequest(String username, String password) {
 	}
 }

@@ -1,25 +1,24 @@
 package com.example.definethebody.service;
 
-
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.definethebody.model.Admin;
 import com.example.definethebody.repository.AdminRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class AdminService {
-	@Autowired
-	private AdminRepository adminRepository;
+
+	private final AdminRepository adminRepository;
+	private final BCryptPasswordEncoder passwordEncoder;
 
 	public boolean authenticateAdmin(String username, String password) {
-		Optional<Admin> adminOpt = adminRepository.findByUsername(username);
-		if (adminOpt.isPresent()) {
-			// 실제 구현에서는 비밀번호를 암호화하여 저장하고 비교해야 합니다.
-			return adminOpt.get().getPassword().equals(password);
-		}
-		return false;
+		Admin admin = adminRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("Admin not found"));
+		return passwordEncoder.matches(password, admin.getPassword());
 	}
 }
