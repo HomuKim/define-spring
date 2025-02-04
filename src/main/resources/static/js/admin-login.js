@@ -1,107 +1,107 @@
 document.addEventListener('DOMContentLoaded', function() {
-	var modal = document.getElementById('adminLoginModal');
-	var btn = document.getElementById('adminLoginLink');
-	var span = document.getElementsByClassName('admin-login-close')[0];
-	var form = document.getElementById('adminLoginForm');
-	var logoutBtn = document.getElementById('adminLogoutButton');
+	// 모달 관련 요소 선택
+	const modal = document.getElementById('adminLoginModal');
+	const loginBtn = document.getElementById('adminLoginLink');
+	const closeBtn = document.querySelector('.admin-login-close');
+	const loginForm = document.getElementById('adminLoginForm');
+	const logoutBtn = document.getElementById('adminLogoutButton');
 
-	// 버튼 클릭시 모달 열기
-	btn.onclick = function() {
-		modal.style.display = 'block';
+	// CSRF 토큰 추출 함수
+	function getCsrfToken() {
+		return document.querySelector('input[name="_csrf"]').value;
 	}
 
-	// X 클릭시 모달 닫기
-	span.onclick = function() {
-		modal.style.display = 'none';
-	}
+	// 모달 제어 로직
+	loginBtn.onclick = () => modal.style.display = 'block';
+	closeBtn.onclick = () => modal.style.display = 'none';
+	window.onclick = (e) => e.target === modal && (modal.style.display = 'none');
 
-	// 모달 외부 클릭시 모달 닫기
-	window.onclick = function(event) {
-		if (event.target == modal) {
-			modal.style.display = 'none';
-		}
-	}
-
-	// 폼 제출 처리
-	form.onsubmit = function(e) {
+	// 로그인 처리
+	loginForm.addEventListener('submit', async (e) => {
 		e.preventDefault();
-		var username = document.getElementById('adminUsername').value;
-		var password = document.getElementById('adminPassword').value;
 
-		fetch('/admin/login', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ username: username, password: password })
-		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.success) {
-					sessionStorage.setItem('adminLoggedIn', 'true');
-					alert('로그인 성공!');
-					checkAdminStatus();
-					modal.style.display = 'none';
-				} else {
-					alert('로그인 실패. 사용자 이름과 비밀번호를 확인해주세요.');
-				}
-			})
-			.catch((error) => {
-				console.error('Error:', error);
-				alert('로그인 중 오류가 발생했습니다.');
+		const formData = new URLSearchParams(new FormData(loginForm));
+		const csrfToken = getCsrfToken();
+
+		try {
+			const response = await fetch('/admin/login', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'X-XSRF-TOKEN': csrfToken
+				},
+				credentials: 'include',
+				body: formData
 			});
-	}
+
+			if (response.ok) {
+				checkAdminStatus();
+				modal.style.display = 'none';
+				window.location.reload(); // 페이지 새로고침으로 상태 동기화
+			} else {
+				alert('로그인 실패: 잘못된 계정 정보');
+			}
+		} catch (error) {
+			console.error('Login error:', error);
+			alert('서버 연결 오류');
+		}
+	});
 
 	// 로그아웃 처리
-	logoutBtn.onclick = function() {
-		fetch('/admin/logout', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
+	logoutBtn.addEventListener('click', async () => {
+		try {
+			const response = await fetch('/admin/logout', {
+				method: 'POST',
+				headers: {
+					'X-XSRF-TOKEN': getCsrfToken()
+				},
+				credentials: 'include'
+			});
+
+			if (response.ok) {
+				sessionStorage.removeItem('adminLoggedIn');
+				hideEditButtons();
+				logoutBtn.style.display = 'none';
+				alert('로그아웃 되었습니다');
 			}
-		})
-			.then(response => response.json())
-			.then(data => {
-				if (data.success) {
-					sessionStorage.removeItem('adminLoggedIn');
-					hideEditButtons();
-					logoutBtn.style.display = 'none';
-					alert('로그아웃되었습니다.');
-				}
-			})
-			.catch((error) => {
-				console.error('Error:', error);
-				alert('로그아웃 중 오류가 발생했습니다.');
+		} catch (error) {
+			console.error('Logout error:', error);
+		}
+	});
+
+	// 관리자 상태 확인
+	const checkAdminStatus = async () => {
+		try {
+			const response = await fetch('/admin/status', {
+				credentials: 'include'
 			});
-	}
+			const data = await response.json();
 
-	// 관리자 상태 확인 및 UI 업데이트 함수
-	function checkAdminStatus() {
-		fetch('/admin/status')
-			.then(response => response.json())
-			.then(data => {
-				if (data.isAdmin) {
-					showEditButtons();
-				} else {
-					hideEditButtons();
-				}
-			});
-	}
+			if (data.isAdmin) {
+				showEditButtons();
+				logoutBtn.style.display = 'inline-block';
+			} else {
+				hideEditButtons();
+				logoutBtn.style.display = 'none';
+			}
+		} catch (error) {
+			console.error('Status check error:', error);
+		}
+	};
 
-	function showEditButtons() {
-		document.querySelectorAll('.edit-button').forEach(button => {
-			button.style.display = 'inline-block';
+	// UI 제어 함수
+	const showEditButtons = () => {
+		document.querySelectorAll('.edit-button').forEach(btn => {
+			btn.style.display = 'inline-block';
 		});
-		logoutBtn.style.display = 'inline-block';
-	}
+	};
 
-	function hideEditButtons() {
-		document.querySelectorAll('.edit-button').forEach(button => {
-			button.style.display = 'none';
+	const hideEditButtons = () => {
+		document.querySelectorAll('.edit-button').forEach(btn => {
+			btn.style.display = 'none';
 		});
-		logoutBtn.style.display = 'none';
-	}
+	};
 
-	// 페이지 로드 시 관리자 상태 확인
+	// 초기 실행
 	checkAdminStatus();
 });
