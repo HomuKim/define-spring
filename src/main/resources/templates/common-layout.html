@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="_csrf" th:content="${_csrf.token}" />
+	<meta name="_csrf_header" th:content="${_csrf.headerName}" />
+	<title th:text="${title}">Default Title</title>
+	<link rel="stylesheet" th:href="@{/css/header.css}">
+	<link rel="stylesheet" th:href="@{/css/footer.css}">
+	<link rel="stylesheet" th:href="@{/css/admin-login.css}">
+</head>
+
+<body>
+	<div th:replace="~{fragments/header :: header}"></div>
+	<div th:insert="${content}"></div>
+	<div th:replace="~{fragments/footer :: footer}"></div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+
+</html>

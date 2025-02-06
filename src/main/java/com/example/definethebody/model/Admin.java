@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,7 +31,7 @@ public class Admin implements UserDetails { // UserDetails 구현 추가
 	// Spring Security 기본 구현
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"));
+		return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"));
 	}
 
 	@Override
