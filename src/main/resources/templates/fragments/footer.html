@@ -12,16 +12,11 @@
 		<div class="admin-login-modal-content">
 			<span class="admin-login-close">&times;</span>
 			<h2>관리자 로그인</h2>
-			<form id="adminLoginForm" method="post">
-				<input type="hidden" name="_csrf" th:value="${_csrf.token}" />
+			<form id="adminLoginForm" action="/admin/api/login" method="post">
 				<input type="text" name="username" placeholder="사용자 이름" required>
 				<input type="password" name="password" placeholder="비밀번호" required>
 				<button type="submit">로그인</button>
 			</form>
-
 		</div>
 	</div>
-
-
-	<script th:src="@{/js/admin-login.js}"></script>
 </footer>

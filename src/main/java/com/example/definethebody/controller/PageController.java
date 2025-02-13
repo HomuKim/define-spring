@@ -21,6 +21,7 @@ import com.example.definethebody.service.FacilityService;
 import com.example.definethebody.service.IntroService;
 import com.example.definethebody.service.TrainerService;
 
+
 // 웹 페이지 요청을 처리하는 컨트롤러 클래스
 @Controller
 public class PageController {

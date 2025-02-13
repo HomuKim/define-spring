@@ -57,13 +57,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// 썸네일 클릭 이벤트
 	images.forEach((thumbnail, index) => {
-		thumbnail.addEventListener('click', () => {
+		thumbnail.addEventListener('click', (e) => {
+			e.stopPropagation(); // 이벤트 버블링 방지
 			if (!isEditMode) {
 				showImage(index);
 			} else {
 				const fileInput = thumbnail.closest('.thumbnail-wrapper').querySelector('.image-upload');
 				fileInput.click();
 			}
+		});
+	});
+
+	// 파일 선택 시 이벤트
+	document.querySelectorAll('.image-upload').forEach(input => {
+		input.addEventListener('click', (e) => {
+			e.stopPropagation(); // 이벤트 버블링 방지
+		});
+		input.addEventListener('change', function(e) {
+			// 기존 코드...
+			// 파일 처리 후 input value 초기화
+			this.value = '';
 		});
 	});
 
@@ -74,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// 관리자 기능 관련 코드
 	function checkAdminStatus() {
-		if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+		if (window.isAdmin) {
 			document.getElementById('editButton').style.display = 'block';
 		}
 	}
@@ -113,7 +126,12 @@ document.addEventListener('DOMContentLoaded', function() {
 					method: 'POST',
 					body: formData
 				})
-					.then(response => response.json())
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('서버 응답 오류');
+						}
+						return response.json();
+					})
 					.then(data => {
 						if (data.success) {
 							thumbnail.src = addTimestamp(data.newImageUrl);
@@ -122,12 +140,12 @@ document.addEventListener('DOMContentLoaded', function() {
 							}
 							alert('이미지가 성공적으로 업데이트되었습니다.');
 						} else {
-							alert('이미지 업데이트에 실패했습니다: ' + data.message);
+							throw new Error(data.message || '이미지 업데이트 실패');
 						}
 					})
 					.catch(error => {
 						console.error('Error:', error);
-						alert('이미지 업로드 중 오류가 발생했습니다.');
+						alert('이미지 업로드 중 오류가 발생했습니다: ' + error.message);
 					});
 			}
 		});
