@@ -5,15 +5,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>이벤트 - 디파인더바디 피트니스</title>
-	<link rel="stylesheet" th:href="@{/css/events.css}">
-	<link rel="stylesheet" th:href="@{/css/header.css}">
-	<link rel="stylesheet" th:href="@{/css/footer.css}">
-	<link rel="stylesheet" th:href="@{/css/admin-login.css}">
 </head>
 
 <body>
-	<div th:replace="~{fragments/header :: header}"></div>
 	<main>
+		<link rel="stylesheet" th:href="@{/css/events.css}">
 		<section class="event-hero">
 			<h1>목표 달성의 부스터, 지금 시작됩니다</h1>
 			<p>회원님들을 위한 특별한 이벤트를 확인하세요</p>
@@ -31,12 +27,12 @@
 			</div>
 		</section>
 	</main>
-	<div th:replace="~{fragments/footer :: footer}"></div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script th:src="@{/js/events.js}"></script>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		window.serverEvents = /*[[${events}]]*/[];
+		window.isAdmin = /*[[${session.isAdmin}]]*/ false;
         /*]]>*/
 	</script>
 </body>

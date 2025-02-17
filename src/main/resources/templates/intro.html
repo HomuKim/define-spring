@@ -6,14 +6,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>인사말 - 디파인더바디 피트니스</title>
 	<link rel="stylesheet" th:href="@{/css/intro.css}">
-	<link rel="stylesheet" th:href="@{/css/header.css}">
-	<link rel="stylesheet" th:href="@{/css/footer.css}">
-	<link rel="stylesheet" th:href="@{/css/admin-login.css}">
 </head>
 
 <body>
-	<div th:replace="~{fragments/header :: header}"></div>
 	<main>
+		<link rel="stylesheet" th:href="@{/css/intro.css}">
 		<section class="intro-hero">
 			<div class="hero-content">
 				<h1 class="editable" contenteditable="false">디파인더바디 피트니스에 오신 것을 환영합니다</h1>
@@ -41,8 +38,8 @@
 			</div>
 		</section>
 	</main>
-	<div th:replace="~{fragments/footer :: footer}"></div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script th:src="@{/js/intro.js}"></script>
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		var introData = {
@@ -51,7 +48,6 @@
 		};
         /*]]>*/
 	</script>
-	<script th:src="@{/js/intro.js}"></script>
 </body>
 
 </html>

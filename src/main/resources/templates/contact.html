@@ -5,10 +5,6 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>고객지원 - 디파인더바디 피트니스</title>
-	<link rel="stylesheet" th:href="@{/css/contact.css}">
-	<link rel="stylesheet" th:href="@{/css/header.css}">
-	<link rel="stylesheet" th:href="@{/css/footer.css}">
-	<link rel="stylesheet" th:href="@{/css/admin-login.css}">
 	<!-- Font Awesome 아이콘 라이브러리 연결 -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 	<!-- 네이버 지도 API 스크립트 -->
@@ -17,9 +13,10 @@
 </head>
 
 <body>
-	<!-- 헤더 영역 (외부 파일에서 로드) -->
-	<div th:replace="~{fragments/header :: header}"></div>
 	<main>
+		<!-- Font Awesome 아이콘 라이브러리 연결 -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+		<link rel="stylesheet" th:href="@{/css/contact.css}">
 		<!-- 메인 타이틀 섹션 -->
 		<section class="contact-hero">
 			<h1>언제든 문의하세요</h1>
@@ -136,9 +133,13 @@
 			</div>
 		</section>
 	</main>
-	<div th:replace="~{fragments/footer :: footer}"></div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script th:src="@{/js/contact.js}"></script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		window.isAdmin = /*[[${session.isAdmin}]]*/ false;
+	    /*]]>*/
+	</script>
 </body>
 
 </html>

@@ -5,15 +5,11 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>팀원 소개 - 디파인더바디 피트니스</title>
-	<link rel="stylesheet" th:href="@{/css/trainers.css}">
-	<link rel="stylesheet" th:href="@{/css/header.css}">
-	<link rel="stylesheet" th:href="@{/css/footer.css}">
-	<link rel="stylesheet" th:href="@{/css/admin-login.css}">
 </head>
 
 <body>
-	<div th:replace="~{fragments/header :: header}"></div>
 	<main>
+		<link rel="stylesheet" th:href="@{/css/trainers.css}">
 		<section class="trainer-hero">
 			<h1>함께하는 피트니스 여정</h1>
 			<p>디파인더바디의 열정적인 스태프들을 만나보세요</p>
@@ -28,9 +24,13 @@
 			</div>
 		</section>
 	</main>
-	<div th:replace="~{fragments/footer :: footer}"></div>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script th:src="@{/js/trainers.js}"></script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		window.isAdmin = /*[[${session.isAdmin}]]*/ false;
+	    /*]]>*/
+	</script>
 	<div id="imageModal" class="trainer-modal">
 		<span class="trainer-modal-close">&times;</span>
 		<button class="prev-btn">&lt;</button>
