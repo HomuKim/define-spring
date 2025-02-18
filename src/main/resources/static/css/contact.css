@@ -184,10 +184,11 @@ body {
 .modal-content {
 	background-color: #fefefe;
 	margin: 15% auto;
-	padding: 20px;
+	padding: 0px 10px 10px 10px;
 	border: 1px solid #888;
 	width: 80%;
 	max-width: 600px;
+	border-radius: 15px;
 }
 
 .modal.show .modal-content {

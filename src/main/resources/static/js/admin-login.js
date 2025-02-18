@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			if (response.ok) {
 				if (data.success) {
-					window.location.href = '/';
+					window.location.href = currentPageUrl;
 				} else {
 					alert(data.message || '로그인 실패');
 				}

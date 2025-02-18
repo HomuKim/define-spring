@@ -1,21 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common-layout :: html(content=~{::body})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common-layout :: html(title=~{::title}, content=~{::body})}">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>고객지원 - 디파인더바디 피트니스</title>
-	<!-- Font Awesome 아이콘 라이브러리 연결 -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-	<!-- 네이버 지도 API 스크립트 -->
-	<script type="text/javascript"
-		src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=w4u0t9veg3"></script>
 </head>
 
 <body>
 	<main>
 		<!-- Font Awesome 아이콘 라이브러리 연결 -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+		<script type="text/javascript"
+			src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=w4u0t9veg3"></script>
 		<link rel="stylesheet" th:href="@{/css/contact.css}">
 		<!-- 메인 타이틀 섹션 -->
 		<section class="contact-hero">
