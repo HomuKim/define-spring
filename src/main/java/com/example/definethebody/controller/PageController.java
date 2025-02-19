@@ -21,7 +21,6 @@ import com.example.definethebody.service.FacilityService;
 import com.example.definethebody.service.IntroService;
 import com.example.definethebody.service.TrainerService;
 
-
 // 웹 페이지 요청을 처리하는 컨트롤러 클래스
 @Controller
 public class PageController {
@@ -117,6 +116,22 @@ public class PageController {
 		} catch (Exception e) {
 			return ResponseEntity.badRequest()
 					.body(Map.of("success", false, "message", "Failed to update facility image: " + e.getMessage()));
+		}
+	}
+
+	@PostMapping("/trainers/update-image")
+	public ResponseEntity<?> updateTrainerImage(@RequestParam("fullImage") MultipartFile fullFile,
+			@RequestParam("thumbnailImage") MultipartFile thumbnailFile, @RequestParam("trainerId") Long trainerId) {
+		try {
+			Trainer updatedTrainer = trainerService.updateTrainerImage(trainerId, fullFile, thumbnailFile);
+			String newFullImageUrl = updatedTrainer.getFullImage() + "?t=" + System.currentTimeMillis();
+			String newThumbnailImageUrl = updatedTrainer.getThumbnailImage() + "?t=" + System.currentTimeMillis();
+
+			return ResponseEntity.ok().body(Map.of("success", true, "newFullImageUrl", newFullImageUrl,
+					"newThumbnailImageUrl", newThumbnailImageUrl));
+		} catch (Exception e) {
+			return ResponseEntity.badRequest()
+					.body(Map.of("success", false, "message", "Failed to update trainer images: " + e.getMessage()));
 		}
 	}
 

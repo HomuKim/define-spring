@@ -13,14 +13,17 @@
 		<section class="trainer-hero">
 			<h1>함께하는 피트니스 여정</h1>
 			<p>디파인더바디의 열정적인 스태프들을 만나보세요</p>
+			<button id="editButton" th:if="${session.isAdmin}" style="display: none;">수정 모드</button>
 		</section>
 
 		<section class="trainers-grid">
 			<div th:each="trainer : ${trainers}" class="trainer-card"
-				th:data-instagram="${trainer.instagramUrl != null ? trainer.instagramUrl : ''}">
+				th:data-instagram="${trainer.instagramUrl != null ? trainer.instagramUrl : ''}"
+				th:data-id="${trainer.id}">
 				<img th:src="${trainer.thumbnailImage}" th:alt="${trainer.name}" class="trainer-image">
 				<img th:src="${trainer.fullImage}" th:alt="${trainer.name} + ' 전체 사진'" class="trainer-full-image"
 					style="display: none;">
+				<input type="file" class="image-upload" th:if="${session.isAdmin}" style="display: none;">
 			</div>
 		</section>
 	</main>
@@ -29,7 +32,10 @@
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		window.isAdmin = /*[[${session.isAdmin}]]*/ false;
-	    /*]]>*/
+		/*]]>*/
+		if (window.isAdmin) {
+			document.getElementById('editButton').style.display = 'block';
+		}
 	</script>
 	<div id="imageModal" class="trainer-modal">
 		<span class="trainer-modal-close">&times;</span>

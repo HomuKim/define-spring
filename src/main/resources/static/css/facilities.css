@@ -178,7 +178,7 @@ body {
 }
 
 #editButton {
-	margin-top: 20px;
+	margin-top: -15px;
 	background-color: var(--primary-red);
 	color: white;
 	border: none;

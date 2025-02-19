@@ -40,11 +40,15 @@ document.addEventListener('DOMContentLoaded', function() {
 				credentials: 'include'
 			});
 
-			const data = await response.json();
+			console.log('Response status:', response.status);
+			const responseText = await response.text();
+			console.log('Response body:', responseText);
+
+			const data = JSON.parse(responseText);
 
 			if (response.ok) {
 				if (data.success) {
-					window.location.href = currentPageUrl;
+					window.location.reload();
 				} else {
 					alert(data.message || '로그인 실패');
 				}
@@ -55,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		} catch (error) {
 			console.error('Login error:', error);
-			alert('서버 연결 오류');
+			alert('서버 연결 오류: ' + error.message);
 		}
 
 	});
