@@ -8,9 +8,8 @@ document.addEventListener('DOMContentLoaded', function() {
 	const nextBtn = document.querySelector('.next-btn');
 	const modalContentContainer = document.querySelector('.trainer-modal-content-container');
 	let currentTrainerIndex = 0;
-	let isEditMode = false; // 전역 스코프로 이동
+	let isEditMode = false;
 
-	// 모달 관련 함수들
 	function resetModal() {
 		modal.style.display = "none";
 		modal.classList.remove('active');
@@ -76,7 +75,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		}, 500);
 	}
 
-	// 이벤트 리스너 설정
 	if (closeBtn) {
 		closeBtn.onclick = closeModal;
 	}
@@ -87,25 +85,147 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	});
 
-	// 트레이너 카드 클릭 이벤트
-	trainerCards.forEach(function(card, index) {
-		card.onclick = function(e) {
-			if (isEditMode) {
-				// 수정 모드일 때 파일 입력 클릭
-				const fileInput = this.querySelector('.image-upload');
-				if (fileInput) {
-					fileInput.click();
-				}
-				e.preventDefault();
+	function handleImageUpload(trainerId, imageType) {
+		const fileInput = document.createElement('input');
+		fileInput.type = 'file';
+		fileInput.accept = 'image/*';
+		fileInput.onchange = function(e) {
+			const file = e.target.files[0];
+			if (file && file.type.startsWith('image/')) {
+				const formData = new FormData();
+				formData.append('fullImage', imageType === 'full' ? file : null);
+				formData.append('thumbnailImage', imageType === 'thumbnail' ? file : null);
+				formData.append('trainerId', trainerId);
+
+				fetch('/trainers/update-image', {
+					method: 'POST',
+					body: formData
+				})
+					.then(response => {
+						if (!response.ok) {
+							throw new Error('서버 응답 오류');
+						}
+						return response.json();
+					})
+					.then(data => {
+						if (data.success) {
+							updateImages(trainerId, data.newThumbnailImageUrl, data.newFullImageUrl);
+							alert('이미지가 성공적으로 업데이트되었습니다.');
+						} else {
+							throw new Error(data.message || '이미지 업데이트 실패');
+						}
+					})
+					.catch(error => {
+						console.error('Error:', error);
+						alert('이미지 업로드 중 오류가 발생했습니다: ' + error.message);
+					});
 			} else {
-				// 보기 모드일 때 모달 열기
-				currentTrainerIndex = index;
-				openModal(this);
+				alert('유효한 이미지 파일을 선택해주세요.');
 			}
+		};
+		fileInput.click();
+	}
+
+	function updateImages(trainerId, thumbnailUrl, fullUrl) {
+		const trainerCard = document.querySelector(`.trainer-card[data-id="${trainerId}"]`);
+		if (trainerCard) {
+			const thumbnailImage = trainerCard.querySelector('.trainer-image');
+			const fullImage = trainerCard.querySelector('.trainer-full-image');
+			if (thumbnailImage && thumbnailUrl) thumbnailImage.src = thumbnailUrl;
+			if (fullImage && fullUrl) fullImage.src = fullUrl;
 		}
+	}
+
+	function showEditModal(trainerId) {
+		const editModal = document.createElement('div');
+		editModal.className = 'edit-modal';
+
+		editModal.innerHTML = `
+            <div class="edit-modal-content">
+                <h2>트레이너 정보 수정</h2>
+                <button id="editFullImage">전체 이미지 변경</button>
+                <button id="editThumbnailImage">썸네일 이미지 변경</button>
+                <button id="editInstagram">인스타그램 주소 변경</button>
+                <button id="closeEditModal">닫기</button>
+            </div>
+        `;
+
+		document.body.appendChild(editModal);
+
+		setTimeout(() => {
+			editModal.classList.add('active');
+		}, 10);
+
+		function closeEditModal() {
+			editModal.classList.remove('active');
+			setTimeout(() => {
+				document.body.removeChild(editModal);
+			}, 300);
+		}
+
+		document.getElementById('editFullImage').addEventListener('click', () => handleImageUpload(trainerId, 'full'));
+		document.getElementById('editThumbnailImage').addEventListener('click', () => handleImageUpload(trainerId, 'thumbnail'));
+		document.getElementById('editInstagram').addEventListener('click', () => editInstagramAddress(trainerId));
+		document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
+
+		// ESC 키로 모달 닫기
+		const escHandler = (e) => {
+			if (e.key === 'Escape') {
+				closeEditModal();
+				document.removeEventListener('keydown', escHandler);
+			}
+		};
+		document.addEventListener('keydown', escHandler);
+	}
+
+	function editInstagramAddress(trainerId) {
+		console.log(`editInstagramAddress 함수 호출됨. trainerId: ${trainerId}`);
+
+		const newAddress = prompt("새로운 인스타그램 주소를 입력하세요:");
+		console.log(`사용자 입력 주소: ${newAddress}`);
+
+		if (newAddress) {
+			fetch(`/api/trainers/${trainerId}/instagram`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ instagramAddress: newAddress })
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log('서버 응답:', data);
+					if (data.success) {
+						alert("인스타그램 주소가 성공적으로 업데이트되었습니다.");
+						// 필요한 경우 UI 업데이트
+					} else {
+						alert("인스타그램 주소 업데이트에 실패했습니다.");
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert("오류가 발생했습니다. 다시 시도해주세요.");
+				});
+		} else {
+			console.log('사용자가 입력을 취소했거나 빈 문자열을 입력했습니다.');
+		}
+	}
+
+
+	trainerCards.forEach(function(card) {
+		const trainerId = card.dataset.id;
+		card.addEventListener('click', function(e) {
+			if (isEditMode) {
+				e.preventDefault();
+				showEditModal(trainerId);
+			} else {
+				currentTrainerIndex = Array.from(trainerCards).indexOf(card);
+				openModal(card);
+			}
+		});
 	});
 
-	// 이전/다음 슬라이드 함수
+
 	function prevSlide() {
 		do {
 			currentTrainerIndex = (currentTrainerIndex - 1 + trainerCards.length) % trainerCards.length;
@@ -120,7 +240,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		updateModalContent(trainerCards[currentTrainerIndex]);
 	}
 
-	// 이전/다음 버튼 이벤트
 	if (prevBtn && nextBtn) {
 		prevBtn.onclick = function(e) {
 			e.stopPropagation();
@@ -133,7 +252,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 
-	// 터치 스와이프 기능
 	if (modalContentContainer) {
 		let startX, moveX;
 
@@ -165,7 +283,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 
-	// 관리자 기능
 	const editButton = document.getElementById('editButton');
 
 	if (window.isAdmin) {
@@ -176,45 +293,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		isEditMode = !isEditMode;
 		this.textContent = isEditMode ? '보기 모드' : '수정 모드';
 		document.body.classList.toggle('edit-mode', isEditMode);
-		console.log('Edit mode:', isEditMode); // 디버깅용
+		console.log('Edit mode:', isEditMode);
 	});
 
-	// 이미지 업로드 처리
-	document.querySelectorAll('.trainer-card').forEach(card => {
-		const fileInput = card.querySelector('.image-upload');
-		const thumbnailImage = card.querySelector('.trainer-image');
-		const fullImage = card.querySelector('.trainer-full-image');
-
-		fileInput.addEventListener('change', function(e) {
-			const file = e.target.files[0];
-			if (file) {
-				const formData = new FormData();
-				formData.append('fullImage', file);
-				formData.append('thumbnailImage', file);
-				formData.append('trainerId', card.dataset.id);
-
-				fetch('/trainers/update-image', {
-					method: 'POST',
-					body: formData
-				})
-					.then(response => response.json())
-					.then(data => {
-						if (data.success) {
-							thumbnailImage.src = data.newThumbnailImageUrl;
-							fullImage.src = data.newFullImageUrl;
-							alert('이미지가 성공적으로 업데이트되었습니다.');
-						} else {
-							throw new Error(data.message || '이미지 업데이트 실패');
-						}
-					})
-					.catch(error => {
-						console.error('Error:', error);
-						alert('이미지 업로드 중 오류가 발생했습니다: ' + error.message);
-					});
-			}
-		});
-	});
-
-	// 초기 모달 리셋
 	resetModal();
 });

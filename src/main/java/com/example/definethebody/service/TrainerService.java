@@ -29,23 +29,30 @@ public class TrainerService {
 		Trainer trainer = trainerRepository.findById(trainerId)
 				.orElseThrow(() -> new RuntimeException("Trainer not found"));
 
-		String fileExtension = getFileExtension(fullFile.getOriginalFilename());
-		String newFileNameBase = generateNewFileName(trainerId);
+		if (fullFile != null) {
+			String fullFileName = saveTrainerImage(trainerId, fullFile, "-full");
+			trainer.setFullImage("/images/member/" + fullFileName);
+		}
 
-		String fullFileName = newFileNameBase + "-full." + fileExtension;
-		String thumbnailFileName = newFileNameBase + "-thumbnail." + fileExtension;
+		if (thumbnailFile != null) {
+			String thumbnailFileName = saveTrainerImage(trainerId, thumbnailFile, "-thumbnail");
+			trainer.setThumbnailImage("/images/member/" + thumbnailFileName);
+		}
 
-		Path uploadPath = Paths.get("src/main/resources/static/images/trainer");
+		return trainerRepository.save(trainer);
+	}
+
+	private String saveTrainerImage(Long trainerId, MultipartFile file, String suffix) throws IOException {
+		String fileExtension = getFileExtension(file.getOriginalFilename());
+		String newFileName = generateNewFileName(trainerId) + suffix + "." + fileExtension;
+
+		Path uploadPath = Paths.get("src/main/resources/static/images/member");
 		if (!Files.exists(uploadPath)) {
 			Files.createDirectories(uploadPath);
 		}
 
-		saveFile(fullFile, uploadPath, fullFileName);
-		saveFile(thumbnailFile, uploadPath, thumbnailFileName);
-
-		trainer.setFullImage("/images/trainer/" + fullFileName);
-		trainer.setThumbnailImage("/images/trainer/" + thumbnailFileName);
-		return trainerRepository.save(trainer);
+		saveFile(file, uploadPath, newFileName);
+		return newFileName;
 	}
 
 	private void saveFile(MultipartFile file, Path uploadPath, String fileName) throws IOException {

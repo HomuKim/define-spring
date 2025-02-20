@@ -119,13 +119,20 @@ public class PageController {
 		}
 	}
 
+// 트레이너 이미지 수정 처리
 	@PostMapping("/trainers/update-image")
-	public ResponseEntity<?> updateTrainerImage(@RequestParam("fullImage") MultipartFile fullFile,
-			@RequestParam("thumbnailImage") MultipartFile thumbnailFile, @RequestParam("trainerId") Long trainerId) {
+	public ResponseEntity<?> updateTrainerImage(
+			@RequestParam(value = "fullImage", required = false) MultipartFile fullFile,
+			@RequestParam(value = "thumbnailImage", required = false) MultipartFile thumbnailFile,
+			@RequestParam("trainerId") Long trainerId) {
 		try {
 			Trainer updatedTrainer = trainerService.updateTrainerImage(trainerId, fullFile, thumbnailFile);
-			String newFullImageUrl = updatedTrainer.getFullImage() + "?t=" + System.currentTimeMillis();
-			String newThumbnailImageUrl = updatedTrainer.getThumbnailImage() + "?t=" + System.currentTimeMillis();
+			String newFullImageUrl = updatedTrainer.getFullImage() != null
+					? updatedTrainer.getFullImage() + "?t=" + System.currentTimeMillis()
+					: null;
+			String newThumbnailImageUrl = updatedTrainer.getThumbnailImage() != null
+					? updatedTrainer.getThumbnailImage() + "?t=" + System.currentTimeMillis()
+					: null;
 
 			return ResponseEntity.ok().body(Map.of("success", true, "newFullImageUrl", newFullImageUrl,
 					"newThumbnailImageUrl", newThumbnailImageUrl));
