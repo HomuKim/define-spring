@@ -4,18 +4,21 @@
 <head>
 	<meta charset="UTF-8">
 	<title th:replace="${title}">기본 타이틀</title>
+	<!-- 공통 리소스 -->
 	<link rel="stylesheet" th:href="@{/css/header.css}">
 	<link rel="stylesheet" th:href="@{/css/footer.css}">
 	<link rel="stylesheet" th:href="@{/css/admin-login.css}">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script th:src="@{/js/header.js}"></script>
+	<script th:src="@{/js/admin-login.js}"></script>
+	<!-- 각 페이지별 리소스 삽입 위치 -->
+	<th:block th:insert="${pageResources}"></th:block>
 </head>
 
 <body>
 	<div th:replace="~{fragments/header :: header}"></div>
 	<div th:insert="${content}"></div>
 	<div th:replace="~{fragments/footer :: footer}"></div>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script th:src="@{/js/header.js}"></script>
-	<script th:src="@{/js/admin-login.js}"></script>
 </body>
 
 </html>

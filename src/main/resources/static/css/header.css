@@ -47,12 +47,10 @@ header {
 	height: 100px;
 }
 
-/* logo-text-wrapper는 제거 */
-
 .logo-text {
 	font-family: 'Arial Black', sans-serif;
 	font-weight: 900;
-	font-size: 27px;
+	font-size: 30px;
 	color: #333;
 	transform: skew(-10deg);
 	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -87,7 +85,7 @@ header {
 	color: var(--secondary-black);
 	text-decoration: none;
 	font-weight: 700;
-	font-size: 18px;
+	font-size: 20px;
 	padding: 8px 12px;
 	transition: all 0.3s ease;
 	position: relative;
@@ -168,7 +166,7 @@ header {
 }
 
 /* 반응형 스타일 */
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 576px) {
 	.navbar {
 		flex-wrap: wrap;
 		height: auto;
@@ -193,7 +191,7 @@ header {
 		right: -100%;
 		width: 80%;
 		max-width: 100px;
-		height: 27vh;
+		height: 28vh;
 		background-color: rgba(255, 255, 255, 0.7);
 		backdrop-filter: blur(10px);
 		padding: 10px 10px 10px 3px;
@@ -208,7 +206,8 @@ header {
 	}
 
 	.nav-links.active {
-		right: 17px;
+		right: 10px;
+		top:-10px
 	}
 
 	.nav-links li {
@@ -229,6 +228,7 @@ header {
 		font-weight: bold;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
+		font-size: 19px;
 	}
 
 	.nav-links a:hover {

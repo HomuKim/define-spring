@@ -1,300 +1,319 @@
-document.addEventListener('DOMContentLoaded', function() {
-	var modal = document.getElementById("imageModal");
-	var modalImg = document.getElementById("modalImage");
-	var instagramLink = document.getElementById("instagramLink");
-	var closeBtn = document.querySelector('.trainer-modal-close');
-	var trainerCards = document.querySelectorAll('.trainer-card');
-	const prevBtn = document.querySelector('.prev-btn');
-	const nextBtn = document.querySelector('.next-btn');
-	const modalContentContainer = document.querySelector('.trainer-modal-content-container');
-	let currentTrainerIndex = 0;
-	let isEditMode = false;
 
-	function resetModal() {
-		modal.style.display = "none";
-		modal.classList.remove('active');
-		modalImg.src = '';
-		instagramLink.href = '';
-	}
+// 전역 변수 선언
+const tabMapping = {
+	career: 1,
+	project: 2,
+	education: 3
+};
 
-	function openModal(card) {
-		var fullImage = card.querySelector('.trainer-full-image');
-		if (fullImage) {
-			showModal(fullImage);
-		}
-	}
+let scrollPosition = 0; // 현재 스크롤 위치를 저장할 변수
 
-	function showModal(fullImage) {
-		modal.style.display = "flex";
-		modal.classList.add('active');
-		modalImg.src = fullImage.src;
-		instagramLink.href = fullImage.parentNode.dataset.instagram;
+$(document).ready(function () {
 
-		modalImg.style.opacity = 0;
-		instagramLink.style.opacity = 0;
-		if (prevBtn) prevBtn.style.opacity = 0;
-		if (nextBtn) nextBtn.style.opacity = 0;
+	// 페이지 로드 후 fade-out 클래스 제거
+	document.body.classList.remove('fade-out');
 
-		setTimeout(() => {
-			modalImg.style.opacity = 1;
-			instagramLink.style.opacity = 1;
-			if (prevBtn) prevBtn.style.opacity = 1;
-			if (nextBtn) nextBtn.style.opacity = 1;
-		}, 50);
-
-		document.body.style.overflow = 'hidden';
-	}
-
-	function updateModalContent(card) {
-		modalImg.style.opacity = 0;
-		instagramLink.style.opacity = 0;
-
-		setTimeout(() => {
-			var fullImage = card.querySelector('.trainer-full-image');
-			if (fullImage) {
-				modalImg.src = fullImage.src;
-				instagramLink.href = card.dataset.instagram;
-
-				modalImg.onload = function() {
-					modalImg.style.opacity = 1;
-					instagramLink.style.opacity = 1;
-				};
-			}
-		}, 300);
-	}
-
-	function closeModal() {
-		modalImg.style.opacity = 0;
-		instagramLink.style.opacity = 0;
-		if (prevBtn) prevBtn.style.opacity = 0;
-		if (nextBtn) nextBtn.style.opacity = 0;
-		modal.classList.remove('active');
-		setTimeout(() => {
-			modal.style.display = "none";
-			document.body.style.overflow = '';
-		}, 500);
-	}
-
-	if (closeBtn) {
-		closeBtn.onclick = closeModal;
-	}
-
-	modal.addEventListener('click', function(event) {
-		if (event.target === modal) {
-			closeModal();
-		}
-	});
-
-	function handleImageUpload(trainerId, imageType) {
-		const fileInput = document.createElement('input');
-		fileInput.type = 'file';
-		fileInput.accept = 'image/*';
-		fileInput.onchange = function(e) {
-			const file = e.target.files[0];
-			if (file && file.type.startsWith('image/')) {
-				const formData = new FormData();
-				formData.append('fullImage', imageType === 'full' ? file : null);
-				formData.append('thumbnailImage', imageType === 'thumbnail' ? file : null);
-				formData.append('trainerId', trainerId);
-
-				fetch('/trainers/update-image', {
-					method: 'POST',
-					body: formData
-				})
-					.then(response => {
-						if (!response.ok) {
-							throw new Error('서버 응답 오류');
-						}
-						return response.json();
-					})
-					.then(data => {
-						if (data.success) {
-							updateImages(trainerId, data.newThumbnailImageUrl, data.newFullImageUrl);
-							alert('이미지가 성공적으로 업데이트되었습니다.');
-						} else {
-							throw new Error(data.message || '이미지 업데이트 실패');
-						}
-					})
-					.catch(error => {
-						console.error('Error:', error);
-						alert('이미지 업로드 중 오류가 발생했습니다: ' + error.message);
-					});
-			} else {
-				alert('유효한 이미지 파일을 선택해주세요.');
-			}
-		};
-		fileInput.click();
-	}
-
-	function updateImages(trainerId, thumbnailUrl, fullUrl) {
-		const trainerCard = document.querySelector(`.trainer-card[data-id="${trainerId}"]`);
-		if (trainerCard) {
-			const thumbnailImage = trainerCard.querySelector('.trainer-image');
-			const fullImage = trainerCard.querySelector('.trainer-full-image');
-			if (thumbnailImage && thumbnailUrl) thumbnailImage.src = thumbnailUrl;
-			if (fullImage && fullUrl) fullImage.src = fullUrl;
-		}
-	}
-
-	function showEditModal(trainerId) {
-		const editModal = document.createElement('div');
-		editModal.className = 'edit-modal';
-
-		editModal.innerHTML = `
-            <div class="edit-modal-content">
-                <h2>트레이너 정보 수정</h2>
-                <button id="editFullImage">전체 이미지 변경</button>
-                <button id="editThumbnailImage">썸네일 이미지 변경</button>
-                <button id="editInstagram">인스타그램 주소 변경</button>
-                <button id="closeEditModal">닫기</button>
-            </div>
-        `;
-
-		document.body.appendChild(editModal);
-
-		setTimeout(() => {
-			editModal.classList.add('active');
-		}, 10);
-
-		function closeEditModal() {
-			editModal.classList.remove('active');
+	// 링크 클릭 시 페이드 아웃 효과 적용 (페이지 전환)
+	document.querySelectorAll('a').forEach(link => {
+		link.addEventListener('click', event => {
+			event.preventDefault();
+			const url = link.getAttribute('href');
+			document.body.classList.add('fade-out');
 			setTimeout(() => {
-				document.body.removeChild(editModal);
-			}, 300);
-		}
-
-		document.getElementById('editFullImage').addEventListener('click', () => handleImageUpload(trainerId, 'full'));
-		document.getElementById('editThumbnailImage').addEventListener('click', () => handleImageUpload(trainerId, 'thumbnail'));
-		document.getElementById('editInstagram').addEventListener('click', () => editInstagramAddress(trainerId));
-		document.getElementById('closeEditModal').addEventListener('click', closeEditModal);
-
-		// ESC 키로 모달 닫기
-		const escHandler = (e) => {
-			if (e.key === 'Escape') {
-				closeEditModal();
-				document.removeEventListener('keydown', escHandler);
-			}
-		};
-		document.addEventListener('keydown', escHandler);
-	}
-
-	function editInstagramAddress(trainerId) {
-		console.log(`editInstagramAddress 함수 호출됨. trainerId: ${trainerId}`);
-
-		const newAddress = prompt("새로운 인스타그램 주소를 입력하세요:");
-		console.log(`사용자 입력 주소: ${newAddress}`);
-
-		if (newAddress) {
-			fetch(`/api/trainers/${trainerId}/instagram`, {
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ instagramAddress: newAddress })
-			})
-				.then(response => response.json())
-				.then(data => {
-					console.log('서버 응답:', data);
-					if (data.success) {
-						alert("인스타그램 주소가 성공적으로 업데이트되었습니다.");
-						// 필요한 경우 UI 업데이트
-					} else {
-						alert("인스타그램 주소 업데이트에 실패했습니다.");
-					}
-				})
-				.catch(error => {
-					console.error('Error:', error);
-					alert("오류가 발생했습니다. 다시 시도해주세요.");
-				});
-		} else {
-			console.log('사용자가 입력을 취소했거나 빈 문자열을 입력했습니다.');
-		}
-	}
-
-
-	trainerCards.forEach(function(card) {
-		const trainerId = card.dataset.id;
-		card.addEventListener('click', function(e) {
-			if (isEditMode) {
-				e.preventDefault();
-				showEditModal(trainerId);
-			} else {
-				currentTrainerIndex = Array.from(trainerCards).indexOf(card);
-				openModal(card);
-			}
+				window.location.href = url;
+			}, 700);
 		});
 	});
 
+	// 1. 헤더와 푸터 로드
+	loadHeaderFooter();
 
-	function prevSlide() {
-		do {
-			currentTrainerIndex = (currentTrainerIndex - 1 + trainerCards.length) % trainerCards.length;
-		} while (trainerCards[currentTrainerIndex].style.display === 'none');
-		updateModalContent(trainerCards[currentTrainerIndex]);
-	}
+	// 2. 카드 클릭 시 모달 창 열기
+	$('.trainer-card, .admin-card').on('click', function (e) {
+		e.preventDefault(); // 기본 동작 방지
+		e.stopPropagation(); // 이벤트 전파 방지
 
-	function nextSlide() {
-		do {
-			currentTrainerIndex = (currentTrainerIndex + 1) % trainerCards.length;
-		} while (trainerCards[currentTrainerIndex].style.display === 'none');
-		updateModalContent(trainerCards[currentTrainerIndex]);
-	}
-
-	if (prevBtn && nextBtn) {
-		prevBtn.onclick = function(e) {
-			e.stopPropagation();
-			prevSlide();
+		// data-no-modal 속성이 있는 경우 모달 열림 방지
+		if ($(this).data('no-modal')) {
+			console.log('모달이 열리지 않습니다.'); // 디버깅 메시지 출력
+			return false; // 함수 종료
 		}
 
-		nextBtn.onclick = function(e) {
-			e.stopPropagation();
-			nextSlide();
-		}
-	}
-
-	if (modalContentContainer) {
-		let startX, moveX;
-
-		modalContentContainer.addEventListener('touchstart', (e) => {
-			startX = e.touches[0].clientX;
-			modalContentContainer.classList.add('swiping');
-			instagramLink.style.opacity = '0';
-		});
-
-		modalContentContainer.addEventListener('touchmove', (e) => {
-			moveX = e.touches[0].clientX;
-			const diff = moveX - startX;
-			modalContentContainer.style.transform = `translateX(${diff}px)`;
-		});
-
-		modalContentContainer.addEventListener('touchend', (e) => {
-			modalContentContainer.classList.remove('swiping');
-			const diff = moveX - startX;
-			if (Math.abs(diff) > 100) {
-				if (diff > 0) {
-					prevSlide();
-				} else {
-					nextSlide();
-				}
-			} else {
-				instagramLink.style.opacity = '1';
-			}
-			modalContentContainer.style.transform = '';
-		});
-	}
-
-	const editButton = document.getElementById('editButton');
-
-	if (window.isAdmin) {
-		editButton.style.display = 'block';
-	}
-
-	editButton.addEventListener('click', function() {
-		isEditMode = !isEditMode;
-		this.textContent = isEditMode ? '보기 모드' : '수정 모드';
-		document.body.classList.toggle('edit-mode', isEditMode);
-		console.log('Edit mode:', isEditMode);
+		// data-no-modal 속성이 없는 경우에만 openModal 함수 호출
+		openModal.call(this, e);
 	});
 
-	resetModal();
+	// 3. 모달 창 닫기
+	$('.close').on('click', closeModal);
+	$('#imageModal').on('click', closeModalBackground);
+
+	// 4. 탭 전환 이벤트
+	$('.trainer-item').on('click', function () {
+		const tabIndex = $(this).data('trainer');
+		activateTab(tabIndex);
+	});
+
+	// 사이드바 탭 클릭 (이벤트 위임 방식)
+	$(document).on('click', '.tab-item', function () {
+		const tabName = $(this).data('tab'); // 클릭한 탭의 이름 가져오기
+		const tabIndex = tabMapping[tabName]; // 매핑된 숫자 가져오기
+
+		// 모든 탭에서 active 클래스 제거
+		$('.tab-item').removeClass('active');
+
+		// 클릭한 탭에 active 클래스 추가
+		$(this).addClass('active');
+
+		// 모든 콘텐츠 숨기기
+		$('.modal-content-container > div').hide();
+
+		// 클릭한 탭에 해당하는 콘텐츠 표시
+		$(`.modal-content-container > div[data-trainer="${tabIndex}"]`).show();
+	});
+
+	// 트레이너 카드 반복 이미지 자동 생성
+	$('.trainer-card, .admin-card').each(function () {
+		const card = $(this);
+		const thumbnailImg = card.find('.trainer-image, .admin-image').attr('src');
+		const match = thumbnailImg.match(/member\/([^\/]+)/);
+		const folder = match ? match[1] : null;
+
+		// 프로필 이미지 생성
+		const profileImagesContainer = card.find('.trainer-profile-images');
+		if (profileImagesContainer.length && folder) {
+			profileImagesContainer.empty();
+			// 충분히 큰 최대치로 반복
+			for (let i = 1; i <= 10; i++) {
+				const imgSrc = `images/member/${folder}/profile${i}.jpg`;
+				const img = new Image();
+				img.onload = function () {
+					profileImagesContainer.append(
+						`<img src="${imgSrc}" alt="프로필 이미지 ${i}" class="trainer-profile-image">`
+					);
+				};
+				img.onerror = function () {
+					// 이미지가 없으면 아무것도 하지 않음
+				};
+				img.src = imgSrc;
+			}
+		}
+
+		// 후기 이미지 생성
+		const reviewImagesContainer = card.find('.trainer-review-images');
+		if (reviewImagesContainer.length && folder) {
+			reviewImagesContainer.empty();
+			// 충분히 큰 최대치로 반복 (예: 12장까지 시도)
+			for (let i = 1; i <= 30; i++) {
+				const imgSrc = `images/member/${folder}/review${i}.jpg`;
+				const img = new Image();
+				img.onload = function () {
+					reviewImagesContainer.append(
+						`<img src="${imgSrc}" alt="후기 이미지 ${i}" class="trainer-review-image">`
+					);
+				};
+				img.onerror = function () {
+					// 이미지가 없으면 아무것도 하지 않음
+				};
+				img.src = imgSrc;
+			}
+		}
+	});
+
 });
+
+// 헤더와 푸터 로드 함수
+function loadHeaderFooter() {
+	$('#header').load('header.html', function (response, status) {
+		if (status === 'error') {
+			console.error('헤더 로드 실패');
+			$('#header').html('<p>기본 헤더</p>');
+		} else {
+			let prevScrollTop = 0;
+			const header = document.getElementById('header');
+
+			window.addEventListener('scroll', function () {
+				let nextScrollTop = window.pageYOffset || 0;
+				if (nextScrollTop > prevScrollTop) {
+					// 스크롤 내릴 때
+					header.classList.add('scrollDown');
+				} else {
+					// 스크롤 올릴 때
+					header.classList.remove('scrollDown');
+				}
+				prevScrollTop = nextScrollTop;
+			});
+
+			if (typeof initializeHeader === 'function') {
+				initializeHeader();
+			}
+		}
+	});
+	$('#footer').load('footer.html');
+}
+
+// 모달 열기 함수
+function openModal(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	const trainerCard = $(this); // 클릭한 트레이너 카드
+	const modal = $('#imageModal'); // 모달 요소 가져오기
+
+	// 현재 스크롤 위치 저장
+	scrollPosition = window.scrollY;
+
+	// body를 고정하고 현재 스크롤 위치만큼 위로 이동시켜서 화면이 움직이지 않도록 함
+	$('body').css({
+		position: 'fixed',
+		top: `-${scrollPosition}px`,
+		width: '100%',
+		height: '100%'
+	}).addClass('modal-open');
+
+	//모달 활성화
+	modal.css('display', 'flex'); // 먼저 보여지도록 설정
+	setTimeout(() => {
+		modal.addClass('show'); // 페이드인 효과 활성화
+	}, 10); // 약간의 지연으로 transition 효과를 적용
+
+	// 프로필 이미지 가져오기
+	const profileImages = trainerCard.find('.trainer-profile-image').map(function () {
+		return $(this).attr('src');
+	}).get().filter(src => src && src.trim() !== '');
+
+
+	// 경력 이미지 가져오기
+	const careerImage = trainerCard.find('.trainer-career-image').attr('src') || '';
+
+	// 후기 이미지 가져오기
+	const reviewImages = trainerCard.find('.trainer-review-image').map(function () {
+		return $(this).attr('src'); // src 속성만 가져옴
+	}).get().filter(src => src && src.trim() !== ''); // 유효한 src만 필터링
+
+
+
+
+
+	// Instagram 링크 가져오기
+	const instagramLink = trainerCard.data('instagram') || '';
+
+	// 프로필 썸네일 추가
+	const thumbnailsContainer = $('.thumbnails');
+	thumbnailsContainer.empty(); // 기존 썸네일 초기화
+	profileImages.forEach((image, index) => {
+		if (image && image.trim() !== '') { // 이미지가 있는 경우에만 추가
+			thumbnailsContainer.append(`<img src="${image}" alt="프로필 이미지 ${index + 1}" class="thumbnail-image">`);
+		}
+	});
+
+	// 첫 번째 이미지를 풀사이즈로 설정
+	if (profileImages.length > 0) {
+		$('#fullImage').attr('src', profileImages[0]).show();
+	} else {
+		$('#fullImage').hide(); // 이미지가 없으면 숨김
+	}
+
+	// 썸네일 호버 시 풀 이미지 변경 이벤트 추가
+	document.querySelectorAll('.thumbnail-image').forEach(thumbnail => {
+		thumbnail.addEventListener('mouseover', function () {
+			document.getElementById('fullImage').src = this.src; // 호버한 썸네일의 src를 풀 이미지로 설정
+			document.getElementById('fullImage').style.display = 'block'; // 풀 이미지를 보이도록 설정
+		});
+	});
+
+	// 경력 이미지 설정
+	if (careerImage && careerImage.trim() !== '') {
+		$('#careerImage').attr('src', careerImage).show();
+	} else {
+		$('#careerImage').hide(); // 경력 이미지가 없으면 숨김
+	}
+
+	// 후기 이미지 추가
+	const reviewContainer = $('.review-images');
+	reviewContainer.empty();
+	const filteredReviewImages = reviewImages.filter(src => src && src.trim() !== '');
+	if (filteredReviewImages.length > 0) {
+		filteredReviewImages.forEach((image, index) => {
+			reviewContainer.append(`<img src="${image}" alt="후기 이미지 ${index + 1}">`);
+			reviewContainer.show(); // 후기 이미지를 표시함
+		});
+	} else {
+		reviewContainer.hide(); // 후기 이미지가 없을 경우 컨테이너를 숨김
+	}
+
+	// Instagram 링크 설정
+	$('#instagramLink').attr('href', instagramLink);
+
+	activateTab(1); // 첫 번째 탭 활성화
+}
+
+// 탭 활성화 함수
+function activateTab(tabIndex) {
+	$('.trainer-item').removeClass('active');
+	$(`.trainer-item[data-trainer="${tabIndex}"]`).addClass('active');
+
+	$('.modal-content-container > div').hide();
+	$(`.modal-content-container > div[data-trainer="${tabIndex}"]`).show();
+
+	updateSidebarState(tabIndex);
+
+	// 스크롤 위치 초기화
+	$('.modal-content-container').scrollTop(0);
+}
+
+// 사이드바 탭 활성화 함수
+function activateSidebarTab(tabName) {
+	$('.sidebar-tab').removeClass('active');
+	$(`.sidebar-tab[data-tab="${tabName}"]`).addClass('active');
+
+	$('.tab-content').hide();
+	$(`.tab-content[data-tab="${tabName}"]`).show();
+}
+
+// 모달 닫기 함수
+function closeModal() {
+	const modal = $('#imageModal'); // 모달 요소 가져오기
+
+	modal.removeClass('show'); // 모달 숨기기
+
+	setTimeout(() => {
+		modal.css('display', 'none'); // 페이드아웃 후 display를 none으로 설정
+	}, 500); // transition 시간과 동일하게 설정
+
+	// body 스타일 초기화 및 스크롤 위치 복원
+	$('body').css({
+		position: '',
+		top: '',
+		width: '',
+		height: ''
+	}).removeClass('modal-open');
+
+	window.scrollTo(0, scrollPosition); // 저장된 스크롤 위치로 이동
+
+	// 초기화 작업
+	$('.thumbnails, .review-images').empty(); // 썸네일 및 후기 이미지 비우기
+	$('#fullImage, #careerImage').attr('src', ''); // 풀사이즈 및 경력 이미지 초기화
+	$('#instagramLink').attr('href', '#'); // Instagram 링크 초기화
+
+	activateTab(1); // 첫 번째 탭으로 초기화
+}
+
+// 배경 클릭으로 모달 닫기 함수
+function closeModalBackground(e) {
+	if ($(e.target).is('#imageModal')) {
+		closeModal();
+	}
+}
+
+// 사이드바 상태 업데이트 함수
+function updateSidebarState(tabIndex) {
+	const tabMapping = {
+		1: 'career',
+		2: 'project',
+		3: 'education'
+	};
+	const activeTabName = tabMapping[tabIndex];
+
+	$('.sidebar .tab-item').removeClass('active');
+	$(`.sidebar .tab-item[data-tab="${activeTabName}"]`).addClass('active');
+}

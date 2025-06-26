@@ -1,10 +1,7 @@
 package com.example.definethebody.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "trainers")
@@ -15,10 +12,10 @@ import lombok.AllArgsConstructor;
 public class Trainer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
 
+	private Long id;
 	private String name;
-	private String fullImage;
-	private String thumbnailImage;
-	private String instagramUrl;
+	private String position; // 예: CEO, GENERAL MANAGER, 트레이너 등
+	private String imagePath; // 썸네일 이미지 경로
+	private String instagramUrl; // 인스타그램 링크
 }

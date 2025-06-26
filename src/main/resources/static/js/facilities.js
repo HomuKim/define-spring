@@ -1,156 +1,111 @@
-document.addEventListener('DOMContentLoaded', function() {
-	let currentIndex = 0;
-	const images = document.querySelectorAll('.thumbnail');
-	const mainImage = document.getElementById('mainImage');
-	let isAnimating = false;
-	let isEditMode = false;
+document.addEventListener('DOMContentLoaded', function () {
 
-	function addTimestamp(url) {
-		return url.split('?')[0] + '?t=' + new Date().getTime();
-	}
+	// 페이지 로드 후 fade-out 클래스 제거 (페이드 인 효과)
+	setTimeout(() => {
+		document.body.classList.remove('fade-out');
+	}, 10);
 
-	// 모든 이미지에 타임스탬프 추가
-	images.forEach(img => {
-		img.src = addTimestamp(img.src);
-	});
-
-	function showImage(index) {
-		if (isAnimating) return;
-		isAnimating = true;
-
-		mainImage.classList.add('fade-out');
-
-		setTimeout(() => {
-			mainImage.src = addTimestamp(images[index].src);
-			mainImage.alt = images[index].alt;
-			mainImage.dataset.id = images[index].dataset.id;
-			mainImage.classList.remove('fade-out');
-			mainImage.classList.add('fade-in');
-
-			images.forEach((thumb, i) => {
-				thumb.classList.toggle('active', i === index);
-			});
-
+	// 링크 클릭 시 페이드 아웃 효과 적용
+	document.querySelectorAll('a').forEach(link => {
+		link.addEventListener('click', event => {
+			if (document.body.classList.contains('fade-out')) return; // 중복 방지
+			event.preventDefault();
+			const url = link.getAttribute('href');
+			document.body.classList.add('fade-out');
 			setTimeout(() => {
-				isAnimating = false;
-				mainImage.classList.remove('fade-in');
-			}, 500);
-		}, 500);
-	}
-
-	function changeSlide(direction) {
-		if (isAnimating || isEditMode) return;
-
-		const currentMainSrc = mainImage.src.split('?')[0];
-		let currentMainIndex = Array.from(images).findIndex(img => img.src.split('?')[0] === currentMainSrc);
-
-		if (currentMainIndex === -1) currentMainIndex = currentIndex;
-
-		let nextIndex = currentMainIndex + direction;
-
-		if (nextIndex >= images.length) nextIndex = 0;
-		if (nextIndex < 0) nextIndex = images.length - 1;
-
-		currentIndex = nextIndex;
-		showImage(nextIndex);
-	}
-
-	// 썸네일 컨테이너에 이벤트 위임 사용
-	const thumbnailContainer = document.querySelector('.thumbnails');
-	thumbnailContainer.addEventListener('click', function(e) {
-		const thumbnail = e.target.closest('.thumbnail');
-		if (!thumbnail) return;
-
-		const index = Array.from(images).indexOf(thumbnail);
-		if (!isEditMode) {
-			showImage(index);
-		} else {
-			const fileInput = thumbnail.closest('.thumbnail-wrapper').querySelector('.image-upload');
-			fileInput.click();
-		}
+				window.location.href = url;
+			}, 700);
+		});
 	});
 
-	// 파일 입력 필드 이벤트
-	thumbnailContainer.addEventListener('change', function(e) {
-		if (!e.target.matches('.image-upload')) return;
+	// 헤더/푸터 동적 로드
+	$("#header").load("header.html", function () {
+		// 헤더 로드 완료 후 실행될 코드
+		if (typeof initializeHeader === 'function') {
+			initializeHeader();
+		}
+	});
+	$("#footer").load("footer.html");
 
-		const file = e.target.files[0];
-		const thumbnail = e.target.previousElementSibling;
+	// 탭 전환 기능
+	document.querySelectorAll('.tab-item').forEach(tab => {
+		tab.addEventListener('click', function () {
+			console.log("탭전환 클릭")
+			// 활성 탭 업데이트
+			document.querySelectorAll('.tab-item').forEach(item => item.classList.remove('active'));
+			this.classList.add('active');
 
-		if (file) {
-			const formData = new FormData();
-			formData.append('image', file);
-			const facilityId = thumbnail.dataset.id;
-			if (!facilityId) {
-				alert('시설 ID를 찾을 수 없습니다.');
-				return;
+			// 콘텐츠 영역 전환
+			const targetTab = this.getAttribute('data-tab');
+			document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+			const targetContent = document.getElementById(targetTab);
+			if (targetContent) targetContent.classList.add('active');
+
+			// 탭 전환 시 상단으로 스크롤
+			window.scrollTo({ top: 420, behavior: 'smooth' });
+		});
+	});
+
+	// 초기 활성 탭 설정 (1층)
+	const initialTab = document.querySelector('.tab-item[data-tab="floor1"]');
+	if (initialTab) initialTab.click();
+
+	const facilityConfigs = [
+		{
+			tabId: 'floor2',
+			folder: 'floor2',
+			prefix: 'facility',
+			ext: 'jpg'
+		},
+		{
+			tabId: 'floor3',
+			folder: 'floor3',
+			prefix: 'facility',
+			ext: 'jpg'
+		},
+		{
+			tabId: 'floor4',
+			folder: 'floor4',
+			prefix: 'facility',
+			ext: 'jpg'
+		},
+		{
+			tabId: 'PTRoom',
+			folder: 'P.T Room',
+			prefix: 'P.T',
+			ext: 'jpg'
+		},
+		{
+			tabId: 'PilatesRoom',
+			folder: 'Pilates Room',
+			prefix: 'Pilates',
+			ext: 'jpg'
+		},
+		{
+			tabId: 'ShowerRoom',
+			folder: 'Shower Room',
+			prefix: 'shower',
+			ext: 'jpg'
+		}
+	];
+
+	facilityConfigs.forEach(cfg => {
+		const container = document.querySelector(`#${cfg.tabId} .image-container`);
+		if (container) {
+			container.innerHTML = '';
+			for (let i = 1; i <= 20; i++) { // 최대 20장까지 시도
+				const div = document.createElement('div');
+				div.className = 'gallery-item';
+				const img = document.createElement('img');
+				img.src = `images/facility/${cfg.folder}/${cfg.prefix}${i}.${cfg.ext}`;
+				img.alt = `${cfg.tabId} ${i}`;
+				img.onerror = function () {
+					if (div.parentNode) div.parentNode.removeChild(div);
+				};
+				div.appendChild(img);
+				container.appendChild(div);
 			}
-			formData.append('facilityId', facilityId);
-
-			fetch('/facilities/update-image', {
-				method: 'POST',
-				body: formData
-			})
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('서버 응답 오류');
-					}
-					return response.json();
-				})
-				.then(data => {
-					if (data.success) {
-						thumbnail.src = addTimestamp(data.newImageUrl);
-						if (mainImage.dataset.id === thumbnail.dataset.id) {
-							mainImage.src = addTimestamp(data.newImageUrl);
-						}
-						alert('이미지가 성공적으로 업데이트되었습니다.');
-					} else {
-						throw new Error(data.message || '이미지 업데이트 실패');
-					}
-				})
-				.catch(error => {
-					console.error('Error:', error);
-					alert('이미지 업로드 중 오류가 발생했습니다: ' + error.message);
-				});
 		}
-
-		// 파일 처리 후 input value 초기화
-		e.target.value = '';
 	});
 
-	// 이전/다음 버튼 이벤트
-	document.querySelector('.prev').addEventListener('click', () => changeSlide(-1));
-	document.querySelector('.next').addEventListener('click', () => changeSlide(1));
-
-	// 관리자 기능 관련 코드
-	function checkAdminStatus() {
-		if (window.isAdmin) {
-			document.getElementById('editButton').style.display = 'block';
-		}
-	}
-
-	checkAdminStatus();
-
-	// 이벤트 리스너 확인 코드 추가
-	thumbnailContainer.querySelectorAll('.image-upload').forEach(input => {
-		input.addEventListener('click', function(e) {
-			console.log('File input clicked');
-			e.stopPropagation();
-		});
-	});
-
-	// 수정 모드 버튼 이벤트
-	document.getElementById('editButton').addEventListener('click', function() {
-		isEditMode = !isEditMode;
-		this.textContent = isEditMode ? '보기 모드' : '수정 모드';
-		document.body.classList.toggle('edit-mode', isEditMode);
-
-		// 파일 입력 필드의 pointer-events 속성 조절
-		document.querySelectorAll('.image-upload').forEach(input => {
-			input.style.pointerEvents = isEditMode ? 'auto' : 'none';
-		});
-	});
-
-	// 초기 이미지 표시
-	showImage(0);
 });

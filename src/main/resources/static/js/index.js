@@ -1,102 +1,54 @@
-document.addEventListener('DOMContentLoaded', function() {
-	console.log('Index: DOMContentLoaded 이벤트 발생');
+document.addEventListener('DOMContentLoaded', function () {
+    // 1. 히어로 섹션 페이드인
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+        heroSection.style.display = 'flex';
+        heroSection.style.opacity = 0;
+        setTimeout(() => {
+            heroSection.style.transition = 'opacity 1s';
+            heroSection.style.opacity = 1;
+        }, 10);
+    }
 
-	const slides = document.querySelectorAll('.event-image');
-	const prevBtn = document.querySelector('.prev-btn');
-	const nextBtn = document.querySelector('.next-btn');
-	let currentSlide = 0;
-	let slideInterval;
+    // 2. 스크롤 애니메이션
+    ScrollReveal().reveal('.reveal', {
+        duration: 800,
+        distance: '40px',
+        origin: 'bottom',
+        interval: 120,
+        viewFactor: 0.2,
+        viewOffset: { top: 20, bottom: 0, left: 0, right: 0 }
+    });
 
-	console.log('슬라이드 개수:', slides.length);
-	console.log('이전 버튼:', prevBtn);
-	console.log('다음 버튼:', nextBtn);
+    // 3. 페이드아웃 클래스 제거
+    document.body.classList.remove('fade-out');
 
-	function showSlide(index) {
-		console.log('showSlide 함수 실행, 인덱스:', index);
-		slides.forEach(slide => slide.classList.remove('active'));
-		slides[index].classList.add('active');
-	}
+    // 4. 헤더와 푸터 로드 함수
+    $("#header").load("header.html", function () {
+        // 헤더 로드 완료 후 실행될 코드
+        if (typeof initializeHeader === 'function') {
+            initializeHeader();
+        }
+    });
+    $("#footer").load("footer.html");
 
-	function nextSlide() {
-		console.log('nextSlide 함수 실행');
-		currentSlide = (currentSlide + 1) % slides.length;
-		showSlide(currentSlide);
-	}
+    // 5. 순차 애니메이션 (CSS로 대체 가능)
+    document.querySelectorAll('.animate-sequence').forEach((el, i) => {
+        el.style.transitionDelay = `${i * 0.5}s`;
+        el.classList.add('active');
+    });
 
-	function prevSlide() {
-		console.log('prevSlide 함수 실행');
-		currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-		showSlide(currentSlide);
-	}
-
-	function startSlideShow() {
-		console.log('startSlideShow 함수 실행');
-		stopSlideShow(); // 기존 인터벌 제거
-		slideInterval = setInterval(nextSlide, 15000); // 15초마다 슬라이드 전환
-	}
-
-	function stopSlideShow() {
-		console.log('stopSlideShow 함수 실행');
-		if (slideInterval) {
-			clearInterval(slideInterval);
-		}
-	}
-
-	// 초기 슬라이드 표시 및 자동 슬라이드 시작
-	showSlide(currentSlide);
-	startSlideShow();
-
-	// 버튼 이벤트 리스너
-	if (prevBtn) {
-		prevBtn.addEventListener('click', () => {
-			console.log('이전 버튼 클릭');
-			prevSlide();
-			startSlideShow(); // 버튼 클릭 후 자동 슬라이드 재시작
-		});
-	}
-
-	if (nextBtn) {
-		nextBtn.addEventListener('click', () => {
-			console.log('다음 버튼 클릭');
-			nextSlide();
-			startSlideShow(); // 버튼 클릭 후 자동 슬라이드 재시작
-		});
-	}
-
-	// 마우스 호버 시 자동 슬라이드 정지
-	const eventBanner = document.querySelector('.event-banner');
-	if (eventBanner) {
-		eventBanner.addEventListener('mouseenter', () => {
-			console.log('이벤트 배너에 마우스 진입');
-			stopSlideShow();
-		});
-		eventBanner.addEventListener('mouseleave', () => {
-			console.log('이벤트 배너에서 마우스 이탈');
-			startSlideShow();
-		});
-	}
-
-	document.querySelectorAll('.card').forEach(card => {
-		card.addEventListener('click', function(e) {
-			console.log('Card clicked:', this.href);
-		});
-	});
-
-	console.log('Index: DOMContentLoaded 이벤트 리스너 종료');
+    // 6. 페이지 전환 페이드아웃 (내부 링크에만 적용)
+    document.querySelectorAll('a[href]').forEach(link => {
+        const url = link.getAttribute('href');
+        if (url && !url.startsWith('http')) { // 내부 링크만
+            link.addEventListener('click', event => {
+                event.preventDefault();
+                document.body.classList.add('fade-out');
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 700);
+            });
+        }
+    });
 });
-
-// 모든 a 태그에 이벤트 리스너 추가
-document.querySelectorAll('a').forEach(link => {
-	link.addEventListener('click', function(e) {
-		console.log('링크 클릭됨:', e.target.href);
-	});
-});
-
-// 문서 전체에 이벤트 위임 사용
-document.addEventListener('click', function(e) {
-	if (e.target.tagName === 'A') {
-		console.log('문서 내 링크 클릭됨:', e.target.href);
-	}
-});
-
-console.log('index.js 로드 완료');

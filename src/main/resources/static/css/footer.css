@@ -27,97 +27,6 @@ footer {
 	margin: 10px 0;
 }
 
-/* 모달 스타일 */
-/*.admin-modal {*/
-/*	display: none;*/
-/*	position: fixed;*/
-/*	z-index: 1000;*/
-/*	left: 0;*/
-/*	top: 0;*/
-/*	width: 100%;*/
-/*	height: 100%;*/
-/*	overflow: auto;*/
-/*	background-color: rgba(0, 0, 0, 0.4);*/
-/*}*/
-
-/*.admin-modal-content {*/
-/*	background-color: var(--pure-white);*/
-/*	margin: 15% auto;*/
-/*	padding: 20px;*/
-/*	border: 1px solid var(--shadow-color);*/
-/*	width: 300px;*/
-/*	border-radius: 5px;*/
-/*	text-align: center;*/
-/*	 모달 내용 전체를 중앙 정렬 */
-/*	position: relative;*/
-/*	 닫기 버튼의 절대 위치 지정을 위해 */
-/*}*/
-
-/*.admin-modal-content h2 {*/
-/*	color: var(--primary-black);*/
-/*	margin: 0 0 20px 0;*/
-/*	 상단 마진 제거, 하단 마진만 유지 */
-/*	font-size: 1.5em;*/
-/*	 text-align: center; 는 이미 .modal-content에서 설정되어 있으므로 제거 가능 */
-/*}*/
-
-/*.close {*/
-/*	position: absolute;*/
-/*	 절대 위치로 설정 */
-/*	top: 10px;*/
-/*	right: 10px;*/
-/*	color: var(--secondary-black);*/
-/*	float: right;*/
-/*	font-size: 28px;*/
-/*	font-weight: bold;*/
-/*	cursor: pointer;*/
-/*}*/
-
-/*.close:hover,*/
-/*.close:focus {*/
-/*	color: var(--primary-red);*/
-/*	text-decoration: none;*/
-/*	cursor: pointer;*/
-/*}*/
-
-
-/*#adminLoginForm {*/
-/*	display: flex;*/
-/*	flex-direction: column;*/
-/*	align-items: center;*/
-/*	width: 100%;*/
-/*}*/
-
-/*#adminLoginForm input[type="password"] {*/
-/*	width: 80%;*/
-/*	 또는 원하는 너비로 조정 */
-/*	max-width: 300px;*/
-/*	 최대 너비 설정 */
-/*	padding: 10px;*/
-/*	margin: 10px 0;*/
-/*	border: 1px solid var(--shadow-color);*/
-/*	border-radius: 4px;*/
-/*}*/
-
-/*#adminLoginForm button {*/
-/*	width: 80%;*/
-/*	 입력 필드와 같은 너비로 설정 */
-/*	max-width: 300px;*/
-/*	background-color: var(--primary-red);*/
-/*	color: var(--pure-white);*/
-/*	padding: 10px 15px;*/
-/*	border: none;*/
-/*	border-radius: 4px;*/
-/*	cursor: pointer;*/
-/*	margin-top: 10px;*/
-/*	 버튼과 입력 필드 사이 간격 */
-/*}*/
-
-/*#adminLoginForm button:hover {*/
-/*	background-color: var(--hover-red);*/
-/*}*/
-
-
 @media (max-width: 768px) {
 	footer {
 		padding: 20px 15px;
@@ -160,10 +69,5 @@ footer {
 	#adminLoginLink {
 		font-size: 11px;
 		margin-top: 20px;
-	}
-
-	.admin-modal-content {
-		width: 90%;
-		margin: 20% auto;
 	}
 }

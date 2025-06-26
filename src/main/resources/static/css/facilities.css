@@ -1,10 +1,29 @@
+:root {
+	--primary-black: #1d1d1f;
+	--secondary-black: #333336;
+	--primary-red: #fa233b;
+	--hover-red: #dc1f34;
+	--pure-white: #ffffff;
+	--off-white: #f5f5f7;
+	--shadow-color: rgba(0, 0, 0, 0.1);
+}
+
 body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	margin: 0;
 	padding: 0;
 	color: #333;
 	line-height: 1.6;
-	background-color: #f5f5f7;
+	background-color: var(--off-white);
+	opacity: 1;
+	transition: opacity 0.7s ease-in-out;
+	visibility: visible;
+}
+
+body.fade-out {
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.7s ease-in-out, visibility 0s 0.7s;
 }
 
 .facility-hero {
@@ -13,6 +32,7 @@ body {
 	text-align: center;
 	padding: 3px 20px;
 	margin: 30px auto 30px auto;
+	/* 상 우 하 좌 마진 설정 */
 	max-width: 1160px;
 	position: relative;
 	display: flex;
@@ -21,6 +41,7 @@ body {
 	justify-content: center;
 	min-height: 280px;
 	border-radius: 20px;
+	/* 모서리를 둥글게 만듭니다 */
 }
 
 .facility-hero::before {
@@ -51,271 +72,154 @@ body {
 	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
-.facility-gallery {
+/* 컨테이너 레이아웃 */
+.container {
+	display: flex;
+	/* 사이드바와 콘텐츠를 가로로 배치 */
 	max-width: 1200px;
 	margin: 0 auto;
-	padding: 20px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
+	overflow: visible;
+	/* Sticky가 정상적으로 작동하도록 설정 */
 }
 
-.main-image {
-	position: relative;
-	width: 100%;
-	max-width: 1200px;
-	height: 600px;
-	margin-bottom: 20px;
-	overflow: hidden;
-	border-radius: 10px;
-	background-color: #f5f5f5;
+/* 사이드바 고정 스타일 */
+.sidebar {
+	top: 30px;
+	/* 헤더 아래에서 고정 시작 */
+	width: auto;
+	/* 너비를 콘텐츠 크기에 맞게 설정 */
+	height: auto;
+	/* 높이를 콘텐츠 크기에 맞게 설정 */
+	background-color: transparent;
+	/* 배경색 제거 */
+	padding-left: 0;
+	/* 좌측 여백 제거 */
+	margin: 0;
+	/* 외부 여백 제거 */
+	overflow: visible;
+	/* 스크롤 숨김 */
 }
 
-.main-image img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	opacity: 1;
-	transition: all 0.5s ease-in-out;
-	transform: scale(1);
+/* 콘텐츠 영역 스타일 */
+.content {
+	width: 85%;
+	/* 사이드바를 제외한 나머지 공간 차지 */
+	padding: 0px 30px 0px 40px;
+	min-height: 500px;
 }
 
-.fade-out {
-	opacity: 0 !important;
-	transform: scale(1.05) !important;
+/* 탭 리스트 스타일 */
+.tabs {
+	list-style-type: none;
+	/* 기본 리스트 스타일 제거 */
+	padding: 0;
+	margin: 0;
+	position: sticky;
+	/* 스크롤 시 고정 */
+	top: 30px;
+	/* 뷰포트 상단에서 30px 아래에 고정 */
+	z-index: 10;
+	/* 다른 요소보다 위에 표시 */
+	position: sticky;
 }
 
-.fade-in {
-	opacity: 1 !important;
-	transform: scale(1) !important;
-}
-
-.prev,
-.next {
-	position: absolute;
-	top: 50%;
-	transform: translateY(-50%);
-	background: rgba(255, 255, 255, 0.2);
-	backdrop-filter: blur(5px);
-	width: 50px;
-	height: 50px;
-	border: none;
-	border-radius: 50%;
+/* 탭 아이템 스타일 */
+.tab-item {
+	display: block;
+	/* 블록 요소로 설정하여 세로로 나열 */
 	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: all 0.3s ease;
-	font-size: 24px;
-	color: #333;
-}
-
-.prev:hover,
-.next:hover {
-	background: rgba(255, 255, 255, 0.4);
-	transform: translateY(-50%) scale(1.1);
-}
-
-.prev {
-	left: 20px;
-}
-
-.next {
-	right: 20px;
-}
-
-.thumbnail-container {
-	width: 100%;
-	max-width: 1200px;
+	font-family: 'Arial Black', sans-serif;
+	font-weight: 100;
+	font-size: 14px;
+	color: var(--primary-black);
+	/* 글자 색상 설정 */
+	text-decoration: none;
+	/* 밑줄 제거 */
 	padding: 10px 0;
-	display: flex;
-	justify-content: center;
+	/* 위아래 간격 추가 */
 }
 
-.thumbnails {
-	display: flex;
-	gap: 10px;
-	justify-content: center;
-	flex-wrap: wrap;
-	max-width: 1200px;
+.tab-item.active {
+	color: var(--primary-red);
+	/* 활성화된 탭의 색상 변경 */
 }
 
-.thumbnail-wrapper {
-	position: relative;
-	width: 150px;
-	height: 100px;
-	margin: 5px;
+/* 탭 아이템 호버 효과 */
+.tab-item:hover {
+	color: var(--hover-red);
+	transition: color 0.3s ease-in-out;
 }
 
-.thumbnail {
+/* 갤러리 이미지 스타일 */
+.gallery-item {
+	margin-bottom: 20px;
+	/* 갤러리 간격을 조금 줄임 */
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, var(--shadow-color));
+}
+
+.gallery-item img {
 	width: 100%;
-	height: 100%;
-	object-fit: cover;
-	cursor: pointer;
-	border-radius: 5px;
-	transition: all 0.3s ease;
-	border: 2px solid transparent;
+	height: auto;
+	display: block;
+	scroll-behavior: smooth
 }
 
-.thumbnail:hover {
-	opacity: 0.8;
-	transform: scale(1.05);
-}
-
-.thumbnail.active {
-	border: 2px solid var(--primary-color);
-	transform: scale(1.05);
-}
-
-.image-upload {
-	opacity: 0;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	cursor: pointer;
-}
-
-#editButton {
-	margin-top: -15px;
-	background-color: var(--primary-red);
-	color: white;
-	border: none;
-	padding: 10px 20px;
-	border-radius: 5px;
-	cursor: pointer;
-	display: none;
-}
-
-.edit-mode .thumbnail-wrapper:hover::after {
-	content: '클릭하여 이미지 변경';
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(0, 0, 0, 0.5);
-	color: white;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 12px;
+.img-caption {
 	text-align: center;
-	pointer-events: none;
-	/* 추가 */
+	padding: 8px;
+	/* 캡션 패딩을 줄임 */
+	background-color: #f8f8f8;
+	font-size: 13px;
+	/* 글씨 크기를 약간 줄임 */
+	color: #666;
 }
 
-/* 반응형 스타일 */
-@media (max-width: 1200px) {
-	.facility-gallery {
-		padding: 15px;
-	}
-
-	.main-image {
-		height: 500px;
-	}
-
-	.thumbnail-wrapper {
-		width: 120px;
-		height: 80px;
-	}
+/* 탭 콘텐츠 숨김 */
+.tab-content {
+	display: none;
+	opacity: 0;
+	transition: opacity 0.3s ease-in-out, visibility 0s 0.3s;
 }
 
-@media (max-width: 768px) {
-	.facility-hero {
-		height: auto;
-		min-height: 20vh;
-		margin: 30px auto;
-		padding: 43px 15px;
-		max-width: 95%;
-		box-sizing: border-box;
-	}
-
-	.facility-hero::before {
-		background-size: cover;
-	}
-
-	.facility-hero h1 {
-		font-size: 36px;
-		margin-bottom: 15px;
-	}
-
-	.facility-hero p {
-		font-size: 16px;
-		max-width: 100%;
-		margin-bottom: 20px;
-	}
-
-	.main-image {
-		height: 400px;
-	}
-
-	.prev,
-	.next {
-		width: 40px;
-		height: 40px;
-		font-size: 20px;
-	}
-
-	.thumbnail-wrapper {
-		width: 100px;
-		height: 70px;
-	}
-
-	.thumbnails {
-		gap: 8px;
-	}
+.tab-content.active {
+	display: block;
+	opacity: 1;
+	transition-delay: 0s;
 }
 
-@media (max-width: 480px) {
-	.facility-hero {
-		min-height: 20vh;
-		margin: 30px auto;
-		padding: 30px 10px;
-		max-width: 95%;
-		box-sizing: border-box;
-	}
+/* 스마트폰 환경 (화면 너비 576px 이하) */
+@media screen and (max-width: 576px) {
 
+	/* Hero 섹션 글자 크기와 크기 축소 */
 	.facility-hero h1 {
 		font-size: 28px;
-		margin-bottom: 10px;
+		/* 제목 크기 축소 */
 	}
 
 	.facility-hero p {
-		font-size: 14px;
+		font-size: 17px;
+		/* 본문 텍스트 크기 축소 */
 	}
 
-	.main-image {
-		height: 300px;
-		margin-bottom: 10px;
+	.facility-hero {
+		width: 350px;
+		padding: 0px 10px 10px 10px;
+		/* 전체적인 패딩 축소 */
+		min-height: 180px;
+		/* 최소 높이 축소 */
+		max-height: 175px;
+		/* 최대 높이 */
 	}
 
-	.prev,
-	.next {
-		width: 35px;
-		height: 35px;
-		font-size: 16px;
-	}
-
-	.prev {
-		left: 10px;
-	}
-
-	.next {
-		right: 10px;
-	}
-
-	.thumbnail-wrapper {
-		width: 80px;
-		height: 60px;
-	}
-
-	.thumbnails {
-		gap: 5px;
-	}
-
-	.thumbnail-container {
-		padding: 5px 0;
+	.tab-item {
+		padding: 0px 0px 10px 5px;
 	}
 }
+
+/* 태블릿 */
+@media (min-width: 577px) and (max-width: 768px) {}
+
+/* 데스크탑 */
+@media (min-width: 769px) {}

@@ -1,10 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common-layout :: html(title=~{::title}, content=~{::body})}">
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{common-layout :: html(title=~{::title}, content=~{::body}, pageResources=~{::page-resources})}">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>고객지원 - 디파인더바디 피트니스</title>
+		<th:block th:fragment="page-resources">
+		<link rel="stylesheet" th:href="@{/css/contact.css}">
+		<script th:src="@{/js/contact.js}"></script>
+	</th:block>
 </head>
 
 <body>
@@ -135,7 +140,7 @@
 	<script th:inline="javascript">
 		/*<![CDATA[*/
 		window.isAdmin = /*[[${session.isAdmin}]]*/ false;
-	    /*]]>*/
+		/*]]>*/
 	</script>
 </body>
 

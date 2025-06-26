@@ -1,10 +1,29 @@
+:root {
+	--primary-black: #1d1d1f;
+	--secondary-black: #333336;
+	--primary-red: #fa233b;
+	--hover-red: #dc1f34;
+	--pure-white: #ffffff;
+	--off-white: #f5f5f7;
+	--shadow-color: rgba(0, 0, 0, 0.1);
+}
+
 body {
 	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	margin: 0;
 	padding: 0;
 	color: #333;
 	line-height: 1.6;
-	background-color: #f5f5f7;
+	background-color: var(--off-white);
+	opacity: 1;
+	transition: opacity 0.7s ease-in-out;
+	visibility: visible;
+}
+
+body.fade-out {
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.7s ease-in-out, visibility 0s 0.7s;
 }
 
 .contact-hero {
@@ -184,11 +203,10 @@ body {
 .modal-content {
 	background-color: #fefefe;
 	margin: 15% auto;
-	padding: 0px 10px 10px 10px;
+	padding: 20px;
 	border: 1px solid #888;
 	width: 80%;
 	max-width: 600px;
-	border-radius: 15px;
 }
 
 .modal.show .modal-content {
@@ -304,6 +322,7 @@ body {
 	transition: all 0.3s ease;
 	flex: 1;
 	margin: 0 10px;
+	cursor: pointer;
 }
 
 .program-icon i {
@@ -315,6 +334,7 @@ body {
 .program-icon:hover {
 	transform: translateY(-5px);
 	background: rgba(255, 255, 255, 0.2);
+	box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
 /* 이미지 모달 전용 스타일 */
@@ -363,28 +383,27 @@ body {
 	}
 }
 
-@media (max-width: 768px) {
-	.contact-hero {
-		height: auto;
-		min-height: 20vh;
-		margin: 30px auto;
-		padding: 61px 15px;
-		max-width: 95%;
-		box-sizing: border-box;
-	}
+@media screen and (max-width: 576px) {
 
-	.contact-hero::before {
-		background-size: cover;
-	}
-
+	/* Hero 섹션 글자 크기와 크기 축소 */
 	.contact-hero h1 {
-		font-size: 32px;
-		margin-bottom: 15px;
+		font-size: 34px;
+		/* 제목 크기 축소 */
 	}
 
 	.contact-hero p {
 		font-size: 16px;
-		margin-bottom: 20px;
+		/* 본문 텍스트 크기 축소 */
+	}
+
+	.contact-hero {
+		width: 350px;
+		padding: 0px 10px 10px 10px;
+		/* 전체적인 패딩 축소 */
+		min-height: 180px;
+		/* 최소 높이 축소 */
+		max-height: 175px;
+		/* 최대 높이 */
 	}
 
 	.contact-grid {

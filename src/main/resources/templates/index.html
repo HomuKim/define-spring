@@ -1,63 +1,66 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common-layout :: html(title=~{::title}, content=~{::body})}">
+<html xmlns:th="http://www.thymeleaf.org"
+	th:replace="~{common-layout :: html(title=~{::title}, content=~{::body}, pageResources=~{::page-resources})}">
+
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>디파인더바디 피트니스</title>
+	<meta name="description" content="디파인더바디 피트니스 - 최신 헬스장 시설, 전문 트레이너, PT, 다양한 이벤트와 프로모션 안내. 건강한 삶을 위한 최고의 선택!">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="디파인더바디 피트니스 | 건강한 삶의 시작">
+	<meta property="og:description" content="최신 헬스장 시설, 전문 트레이너, 다양한 이벤트 안내. 디파인더바디 피트니스에서 건강을 시작하세요!">
+	<meta property="og:image" content="https://definethebody.com/images/logo.png">
+	<meta property="og:url" content="https://definethebody.com/">
+	<title>디파인더바디 피트니스 | 헬스장, PT, 트레이너, 이벤트</title>
+	<th:block th:fragment="page-resources">
+		<link rel="stylesheet" th:href="@{/css/index.css}">
+		<script src="https://unpkg.com/scrollreveal"></script>
+		<script th:src="@{/js/index.js}"></script>
+	</th:block>
 </head>
 
-<body>
+<body class="fade-out">
+
 	<main>
-		<link rel="stylesheet" th:href="@{/css/index.css}">
-		<section class="hero-section">
-			<div class="hero-content">
-				<h1 th:text="${heroTitle ?: '건강한 삶을 시작하세요'}" th:attr="contenteditable=${session.isAdmin == true}">건강한 삶을
-					시작하세요</h1>
-				<p th:text="${heroDescription ?: '최신 장비와 전문 트레이너가 여러분을 기다리고 있습니다.'}"
-					th:attr="contenteditable=${session.isAdmin == true}">최신 장비와 전문 트레이너가 여러분을 기다리고 있습니다.</p>
+		<section class="hero-section animate-sequence" style="display: none;">
+			<div class="hero-content animate-sequence">
+				<h1 class="animate-sequence">건강한 삶을 시작하세요</h1>
+				<p class="animate-sequence">최신 장비와 전문 트레이너가 여러분을 기다리고 있습니다</p>
 				<a href="https://map.naver.com/p/entry/place/1960250523?placePath=%252Fhome%253Fentry%253Dplt&searchType=place&lng=127.0151611&lat=37.6086138&c=15.00,0,0,0,dh"
-					class="cta-button" th:text="${ctaButtonText ?: '지금 방문하기'}"
-					th:attr="contenteditable=${session.isAdmin == true}">지금 방문하기</a>
+					class="cta-button animate-sequence">지금 방문하기</a>
 			</div>
 		</section>
 
-
-		<section class="content-section">
-			<div class="event-banner" th:if="${not #lists.isEmpty(events)}">
-				<div class="slider">
-					<img th:each="event : ${events}" th:src="@{${event.image}}" th:alt="${event.title}"
-						class="event-image editable">
-					<button class="prev-btn" th:if="${#lists.size(events) > 1}">&#10094;</button>
-					<button class="next-btn" th:if="${#lists.size(events) > 1}">&#10095;</button>
-				</div>
-			</div>
-
+		<section class="content-section reveal">
 			<div class="feature-cards">
-				<a th:href="@{/events}" class="card">
-					<h3 class="editable" contenteditable="false">이벤트</h3>
-					<p class="editable" contenteditable="false">디파인더바디만의 <br>다양한 이벤트와 프로모션을 확인하세요</p>
-				</a>
-				<a th:href="@{/trainers}" class="card">
-					<h3 class="editable" contenteditable="false">팀원 소개</h3>
-					<p class="editable" contenteditable="false">디파인더바디의 <br>스태프들을 만나보세요</p>
-				</a>
-				<a th:href="@{/facilities}" class="card">
-					<h3 class="editable" contenteditable="false">시설 소개</h3>
-					<p class="editable" contenteditable="false">디파인더바디의 <br>최신 장비와 쾌적한 환경을 경험하세요</p>
-				</a>
-				<a th:href="@{/contact}" class="card">
-					<h3 class="editable" contenteditable="false">고객 지원</h3>
-					<p class="editable" contenteditable="false">디파인더바디에게 <br>궁금한 점이 있으면 문의해주세요</p>
-				</a>
+				<div>
+					<a th:href="@{/events}" class="card card-event">
+						<h3 class="editable" contenteditable="false">EVENT</h3>
+						<p class="editable" contenteditable="false">디파인더바디의<br>이벤트와 프로모션을<br> 확인하세요</p>
+					</a>
+				</div>
+				<div>
+					<a th:href="@{/trainers}" class="card card-staff">
+						<h3 class="editable" contenteditable="false">STAFF</h3>
+						<p class="editable" contenteditable="false">디파인더바디의<br>열정적인 스태프들을<br>만나보세요</p>
+					</a>
+				</div>
+				<div>
+					<a th:href="@{/facilities}" class="card card-gym">
+						<h3 class="editable" contenteditable="false">GYM</h3>
+						<p class="editable" contenteditable="false">디파인더바디의<br>최신 장비와 쾌적한<br>환경을 경험하세요</p>
+					</a>
+				</div>
+				<div>
+					<a th:href="@{/contact}" class="card card-contact">
+						<h3 class="editable" contenteditable="false">CONTACT US</h3>
+						<p class="editable" contenteditable="false">디파인더바디에게<br>궁금한 점이 있으면<br>문의해주세요</p>
+					</a>
+				</div>
 			</div>
 		</section>
 	</main>
-	<script th:src="@{/js/index.js}"></script>
-	<script th:inline="javascript">
-		window.serverEvents = /*[[${events}]]*/[];
-		window.isAdmin = /*[[${session.isAdmin == true}]]*/ false;
-	</script>
 </body>
 
 </html>
