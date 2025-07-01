@@ -18,8 +18,9 @@ public class Event {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name="imageUrl")
+	@Column(name = "IMAGEURL")
 	private String imageUrl;
+	
 	private String title;
 
 	@Lob

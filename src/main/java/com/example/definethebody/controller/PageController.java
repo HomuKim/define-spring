@@ -71,7 +71,7 @@ public class PageController {
 	@GetMapping("/trainers")
 	public String trainers(Model model) {
 		List<Trainer> trainers = trainerService.findAllTrainers();
-		model.addAttribute("trainers", trainers);
+		model.addAttribute("trainerList", trainers);
 		for (Trainer trainer : trainers) {
 			System.out.println("트레이너 ID: " + trainer.getId());
 			System.out.println("트레이너 구분: " + trainer.getPosition());
@@ -81,7 +81,24 @@ public class PageController {
 			System.out.println("------------------------");
 		}
 
-		return "trainers"; // src/main/resources/templates/trainers.html
+		return "trainers";
+	}
+
+	// 이벤트 데이터 API (JSON 반환)
+	@GetMapping("/api/trainers")
+	@ResponseBody
+	public List<Trainer> getAllTrainersApi() {
+		List<Trainer> trainers = trainerService.findAllTrainers();
+
+		// 콘솔에 출력
+		System.out.println(trainers);
+
+		// 혹은 각 Trainer를 한 줄씩 출력하고 싶다면
+		for (Trainer trainer : trainers) {
+			System.out.println(trainer);
+		}
+
+		return trainers;
 	}
 
 	// 시설 페이지 요청 처리

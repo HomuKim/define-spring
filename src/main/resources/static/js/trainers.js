@@ -25,10 +25,13 @@ $(document).ready(function () {
 		});
 	});
 
-	// 1. 헤더와 푸터 로드
+	// 헤더와 푸터 로드
 	loadHeaderFooter();
 
-	// 2. 카드 클릭 시 모달 창 열기
+	// 트레이너 카드 동적 생성 함수 호출 (실제 동작 반영)
+	loadTrainers();
+
+	// 카드 클릭 시 모달 창 열기
 	$('.trainer-card, .admin-card').on('click', function (e) {
 		e.preventDefault(); // 기본 동작 방지
 		e.stopPropagation(); // 이벤트 전파 방지
@@ -43,11 +46,11 @@ $(document).ready(function () {
 		openModal.call(this, e);
 	});
 
-	// 3. 모달 창 닫기
+	// 모달 창 닫기
 	$('.close').on('click', closeModal);
 	$('#imageModal').on('click', closeModalBackground);
 
-	// 4. 탭 전환 이벤트
+	// 탭 전환 이벤트
 	$('.trainer-item').on('click', function () {
 		const tabIndex = $(this).data('trainer');
 		activateTab(tabIndex);
@@ -71,55 +74,113 @@ $(document).ready(function () {
 		$(`.modal-content-container > div[data-trainer="${tabIndex}"]`).show();
 	});
 
-	// 트레이너 카드 반복 이미지 자동 생성
-	$('.trainer-card, .admin-card').each(function () {
-		const card = $(this);
-		const thumbnailImg = card.find('.trainer-image, .admin-image').attr('src');
-		const match = thumbnailImg.match(/member\/([^\/]+)/);
-		const folder = match ? match[1] : null;
+	// 트레이너 카드 동적 생성 함수
+	async function loadTrainers() {
+		try {
+			const response = await fetch('/api/trainers');
+			if (!response.ok) throw new Error('트레이너 데이터를 불러오지 못했습니다.');
+			const trainers = await response.json();
 
-		// 프로필 이미지 생성
-		const profileImagesContainer = card.find('.trainer-profile-images');
-		if (profileImagesContainer.length && folder) {
-			profileImagesContainer.empty();
-			// 충분히 큰 최대치로 반복
-			for (let i = 1; i <= 10; i++) {
-				const imgSrc = `images/member/${folder}/profile${i}.jpg`;
-				const img = new Image();
-				img.onload = function () {
-					profileImagesContainer.append(
-						`<img src="${imgSrc}" alt="프로필 이미지 ${i}" class="trainer-profile-image">`
-					);
-				};
-				img.onerror = function () {
-					// 이미지가 없으면 아무것도 하지 않음
-				};
-				img.src = imgSrc;
-			}
-		}
+			const container = document.querySelector('.trainer-cards-container');
 
-		// 후기 이미지 생성
-		const reviewImagesContainer = card.find('.trainer-review-images');
-		if (reviewImagesContainer.length && folder) {
-			reviewImagesContainer.empty();
-			// 충분히 큰 최대치로 반복 (예: 12장까지 시도)
-			for (let i = 1; i <= 30; i++) {
-				const imgSrc = `images/member/${folder}/review${i}.jpg`;
-				const img = new Image();
-				img.onload = function () {
-					reviewImagesContainer.append(
-						`<img src="${imgSrc}" alt="후기 이미지 ${i}" class="trainer-review-image">`
-					);
-				};
-				img.onerror = function () {
-					// 이미지가 없으면 아무것도 하지 않음
-				};
-				img.src = imgSrc;
-			}
+			container.innerHTML = '';
+
+			trainers.forEach(trainer => {
+				const card = document.createElement('div');
+				card.className = 'trainer-card';
+				card.setAttribute('data-instagram', trainer.instagramUrl || '');
+
+				// 이미지 경로 조합
+				const thumbnailPath = `/images/member/${trainer.imagePath}/thumbnail.png`;
+				const careerImagePath = `/images/member/${trainer.imagePath}/career.jpg`;
+
+				card.innerHTML = `
+        <img src="${thumbnailPath}" alt="${trainer.name}" class="trainer-image">
+        <div class="trainer-name">${trainer.name}</div>
+        <div class="trainer-position">${trainer.position || ''}</div>
+        <div class="trainer-hidden-details">
+            <div class="trainer-profile-images"></div>
+            <img src="${careerImagePath}" alt="경력 이미지" class="trainer-career-image">
+            <div class="trainer-review-images"></div>
+        </div>
+    `;
+				container.appendChild(card);
+			});
+			// 카드가 모두 생성된 후에, 기존의 반복 이미지 생성 코드 실행
+			generateProfileAndReviewImages();
+		} catch (error) {
+			console.error(error);
+			document.querySelector('.trainer-cards-container').innerHTML = '<p>트레이너 정보를 불러올 수 없습니다.</p>';
 		}
-	});
+	}
+
+	// 기존 반복 이미지 생성 코드를 함수로 분리
+	function generateProfileAndReviewImages() {
+		$('.trainer-card, .admin-card').each(function () {
+			const card = $(this);
+			const thumbnailImg = card.find('.trainer-image, .admin-image').attr('src');
+			const match = thumbnailImg.match(/member\/([^\/]+)/);
+			const folder = match ? match[1] : null;
+
+			// 프로필 이미지 생성
+			const profileImagesContainer = card.find('.trainer-profile-images');
+			if (profileImagesContainer.length && folder) {
+				profileImagesContainer.empty();
+				for (let i = 1; i <= 10; i++) {
+					const imgSrc = `images/member/${folder}/profile${i}.jpg`;
+					const img = new Image();
+					img.onload = function () {
+						profileImagesContainer.append(
+							`<img src="${imgSrc}" alt="프로필 이미지 ${i}" class="trainer-profile-image">`
+						);
+					};
+					img.src = imgSrc;
+				}
+			}
+
+			// 후기 이미지 생성
+			const reviewImagesContainer = card.find('.trainer-review-images');
+			if (reviewImagesContainer.length && folder) {
+				reviewImagesContainer.empty();
+				for (let i = 1; i <= 30; i++) {
+					const imgSrc = `images/member/${folder}/review${i}.jpg`;
+					const img = new Image();
+					img.onload = function () {
+						reviewImagesContainer.append(
+							`<img src="${imgSrc}" alt="후기 이미지 ${i}" class="trainer-review-image">`
+						);
+					};
+					img.src = imgSrc;
+				}
+			}
+		});
+	}
 
 });
+
+// 상세보기 버튼 클릭 시 모달 오픈 및 이미지 로딩
+document.addEventListener('click', function (e) {
+	if (e.target.classList.contains('open-modal-btn')) {
+		const trainerId = e.target.getAttribute('data-id');
+		// AJAX로 상세 이미지 데이터 요청
+		fetch(`/api/trainers/${trainerId}/images`)
+			.then(res => res.json())
+			.then(images => {
+				// images 배열을 모달에 동적으로 추가
+				const modalImageContainer = document.querySelector('.modal .profile-images');
+				modalImageContainer.innerHTML = '';
+				images.forEach(img => {
+					const imgElem = document.createElement('img');
+					imgElem.src = img.url;
+					imgElem.alt = img.desc || '';
+					modalImageContainer.appendChild(imgElem);
+				});
+				// 모달 열기
+				document.getElementById('imageModal').style.display = 'block';
+			});
+	}
+});
+
 
 // 헤더와 푸터 로드 함수
 function loadHeaderFooter() {
@@ -189,10 +250,6 @@ function openModal(e) {
 	const reviewImages = trainerCard.find('.trainer-review-image').map(function () {
 		return $(this).attr('src'); // src 속성만 가져옴
 	}).get().filter(src => src && src.trim() !== ''); // 유효한 src만 필터링
-
-
-
-
 
 	// Instagram 링크 가져오기
 	const instagramLink = trainerCard.data('instagram') || '';
