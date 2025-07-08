@@ -60,7 +60,7 @@
 		<section class="trainers-grid">
 			<h2>트레이너</h2>
 			<div class="trainer-cards-container">
-				<div class="trainer-card" th:each="trainer : ${trainerList}">
+				<div class="trainer-card" th:each="trainer : ${trainerList}" th:attr="data-id=${trainer.id}">
 					<img th:src="@{'/images/member/' + ${trainer.imagePath} + '/thumbnail.png'}"
 						th:alt="${trainer.name}" class="trainer-image">
 					<div class="trainer-name" th:text="${trainer.name}"></div>
