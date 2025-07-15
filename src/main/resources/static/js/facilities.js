@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		document.body.classList.remove('fade-out');
 	}, 10);
 
+
 	// 링크 클릭 시 페이드 아웃 효과 적용
 	document.querySelectorAll('a').forEach(link => {
 		link.addEventListener('click', event => {

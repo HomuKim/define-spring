@@ -192,7 +192,7 @@ function openModal(e) {
 		getExistingImages(tryProfileImages, function (profileImages) {
 			console.log('존재하는 프로필 이미지 배열:', profileImages);
 
-			// 예시: 썸네일에 동적으로 추가
+			// 썸네일에 동적으로 추가
 			const thumbnailsContainer = $('.thumbnails').empty();
 			profileImages.forEach((src, idx) => {
 				$('<img>')
@@ -211,16 +211,9 @@ function openModal(e) {
 			}
 
 			// 썸네일 호버 시 풀 이미지 변경
-			thumbnailsContainer.on('mouseover', '.thumbnail-image', function () {
+			thumbnailsContainer.off('mouseover').on('mouseover', '.thumbnail-image', function () {
 				$('#fullImage').attr('src', $(this).attr('src')).show();
 			});
-
-			// 풀사이즈 이미지 세팅
-			if (profileImages.length > 0) {
-				$('#fullImage').attr('src', profileImages[0]).show();
-			} else {
-				$('#fullImage').hide();
-			}
 		});
 
 		// 후기 이미지: 존재하는 파일만 배열로 추출

@@ -84,7 +84,7 @@ public class PageController {
 		return "trainers";
 	}
 
-	// 이벤트 데이터 API (JSON 반환)
+	// 트레이너 상세이미지 데이터 API (JSON 반환)
 	@GetMapping("/api/trainers")
 	@ResponseBody
 	public List<Trainer> getAllTrainersApi() {
@@ -107,20 +107,6 @@ public class PageController {
 		List<Facility> facilities = facilityService.getAllFacilities();
 		model.addAttribute("facilities", facilities);
 		return "facilities";
-	}
-
-	// 시설 페이지 수정 처리
-	@PostMapping("/facilities/update-image")
-	public ResponseEntity<?> updateFacilityImage(@RequestParam("image") MultipartFile file,
-			@RequestParam("facilityId") Long facilityId) {
-		try {
-			Facility updatedFacility = facilityService.updateFacilityImage(facilityId, file);
-			String newImageUrl = updatedFacility.getImageUrl() + "?t=" + System.currentTimeMillis(); // 타임스탬프 추가
-			return ResponseEntity.ok().body(Map.of("success", true, "newImageUrl", newImageUrl));
-		} catch (Exception e) {
-			return ResponseEntity.badRequest()
-					.body(Map.of("success", false, "message", "Failed to update facility image: " + e.getMessage()));
-		}
 	}
 
 	// 고객지원 페이지 요청 처리

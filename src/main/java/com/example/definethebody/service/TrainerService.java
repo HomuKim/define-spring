@@ -16,6 +16,6 @@ public class TrainerService {
     }
 
     public List<Trainer> findAllTrainers() {
-        return trainerRepository.findAll();
+        return trainerRepository.findAllByOrderByIdAsc();
     }
 }
