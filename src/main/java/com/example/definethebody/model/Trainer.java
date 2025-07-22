@@ -1,5 +1,7 @@
 package com.example.definethebody.model;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,8 +18,9 @@ public class Trainer {
 	private Long id;
 	private String name;
 	private String position; // 예: CEO, GENERAL MANAGER, 트레이너 등
-
-	@Column(name = "IMAGEPATH")
-	private String imagePath; // 썸네일 이미지 경로
 	private String instagramUrl; // 인스타그램 링크
+
+	@OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)
+	private List<TrainerImage> images;
+
 }

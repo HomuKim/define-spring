@@ -1,5 +1,7 @@
 package com.example.definethebody.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,8 +19,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.definethebody.model.Event;
 import com.example.definethebody.model.Facility;
 import com.example.definethebody.model.Trainer;
+import com.example.definethebody.model.TrainerImage;
 import com.example.definethebody.service.EventService;
 import com.example.definethebody.service.FacilityService;
+import com.example.definethebody.service.TrainerImageService;
 import com.example.definethebody.service.TrainerService;
 
 // 웹 페이지 요청을 처리하는 컨트롤러 클래스
@@ -30,6 +35,8 @@ public class PageController {
 	private TrainerService trainerService;
 	@Autowired
 	private FacilityService facilityService;
+	@Autowired
+	private TrainerImageService trainerImageService;
 
 	// 홈페이지 요청 처리
 	@GetMapping("/")
@@ -71,34 +78,46 @@ public class PageController {
 	@GetMapping("/trainers")
 	public String trainers(Model model) {
 		List<Trainer> trainers = trainerService.findAllTrainers();
-		model.addAttribute("trainerList", trainers);
+		Map<Long, String> trainerThumbnailMap = new HashMap<>();
 		for (Trainer trainer : trainers) {
-			System.out.println("트레이너 ID: " + trainer.getId());
-			System.out.println("트레이너 구분: " + trainer.getPosition());
-			System.out.println("트레이너 이름: " + trainer.getName());
-			System.out.println("트레이너 이미지 경로: " + trainer.getImagePath());
-			System.out.println("트레이너 인스타그램주소: " + trainer.getInstagramUrl());
-			System.out.println("------------------------");
-		}
+			// 대표 썸네일(예: image_type = 'profile' 또는 'thumbnail') 한 장만 뽑기
+			TrainerImage thumbnail = trainerImageService
+					.findFirstByTrainerIdAndImageTypeOrderByIdAsc(trainer.getId(), "thumbnail");
+			String imgPath = (thumbnail != null) ? thumbnail.getImagePath() : "images/default-thumbnail.png";
+			trainerThumbnailMap.put(trainer.getId(), imgPath);
 
+		}
+		model.addAttribute("trainerList", trainers);
+		model.addAttribute("trainerThumbnailMap", trainerThumbnailMap);
 		return "trainers";
 	}
 
 	// 트레이너 상세이미지 데이터 API (JSON 반환)
 	@GetMapping("/api/trainers")
 	@ResponseBody
-	public List<Trainer> getAllTrainersApi() {
+	public List<Map<String, Object>> getTrainersWithImages() {
 		List<Trainer> trainers = trainerService.findAllTrainers();
-
-		// 콘솔에 출력
-		System.out.println(trainers);
-
-		// 혹은 각 Trainer를 한 줄씩 출력하고 싶다면
+		List<Map<String, Object>> result = new ArrayList<>();
 		for (Trainer trainer : trainers) {
-			System.out.println(trainer);
-		}
+			Map<String, Object> map = new HashMap<>();
+			map.put("id", trainer.getId());
+			map.put("name", trainer.getName());
+			map.put("instagramUrl", trainer.getInstagramUrl());
+			map.put("position", trainer.getPosition());
 
-		return trainers;
+			// 이 트레이너의 이미지 리스트를 포함
+			List<TrainerImage> images = trainerImageService.findByTrainerIdOrderByIdAsc(trainer.getId());
+			List<Map<String, Object>> imageList = new ArrayList<>();
+			for (TrainerImage img : images) {
+				Map<String, Object> imgMap = new HashMap<>();
+				imgMap.put("imagePath", img.getImagePath());
+				imgMap.put("imageType", img.getImageType());
+				imageList.add(imgMap);
+			}
+			map.put("images", imageList); // 트레이너별 이미지 정보 포함
+			result.add(map);
+		}
+		return result;
 	}
 
 	// 시설 페이지 요청 처리

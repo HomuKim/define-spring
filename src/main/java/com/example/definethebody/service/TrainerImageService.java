@@ -33,7 +33,6 @@ public class TrainerImageService {
                     // 필요한 필드만 업데이트
                     existing.setImagePath(updateData.getImagePath());
                     existing.setImageType(updateData.getImageType());
-                    existing.setDescription(updateData.getDescription());
                     // ... 기타 필드
                     return trainerImageRepository.save(existing);
                 });
@@ -57,6 +56,10 @@ public class TrainerImageService {
 
     public List<TrainerImage> findByTrainerIdAndImageType(Long trainerId, String imageType) {
         return trainerImageRepository.findByTrainerIdAndImageType(trainerId, imageType);
+    }
+
+    public TrainerImage findFirstByTrainerIdAndImageTypeOrderByIdAsc(Long trainerId, String imageType) {
+        return trainerImageRepository.findFirstByTrainerIdAndImageTypeOrderByIdAsc(trainerId, imageType);
     }
 
 }

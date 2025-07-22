@@ -10,4 +10,6 @@ public interface TrainerImageRepository extends JpaRepository<TrainerImage, Long
 
     // 이미지 타입별 조회 등 커스텀 메서드 추가 가능
     List<TrainerImage> findByTrainerIdAndImageType(Long trainerId, String imageType);
+
+    TrainerImage findFirstByTrainerIdAndImageTypeOrderByIdAsc(Long trainerId, String imageType);
 }

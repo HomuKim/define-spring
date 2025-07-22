@@ -29,8 +29,7 @@
 				</div>
 				<div class="admin-card" th:each="trainer : ${trainerList}" th:if="${trainer.position} == 'admin'"
 					th:attr="data-id=${trainer.id}">
-					<img th:src="@{'/images/member/' + ${trainer.imagePath} + '/thumbnail.png'}"
-						th:alt="${trainer.name}" class="admin-image">
+					<img th:src="@{/${trainerThumbnailMap[trainer.id]}}" th:alt="${trainer.name}" class="admin-image">
 					<div class="trainer-name" th:utext="${trainer.name}"></div>
 				</div>
 			</div>
@@ -40,11 +39,11 @@
 			<div class="trainer-cards-container">
 				<div class="trainer-card" th:each="trainer : ${trainerList}" th:if="${trainer.position} == 'trainer'"
 					th:attr="data-id=${trainer.id}">
-					<img th:src="@{'/images/member/' + ${trainer.imagePath} + '/thumbnail.png'}"
-						th:alt="${trainer.name}" class="trainer-image">
+					<img th:src="@{/${trainerThumbnailMap[trainer.id]}}" th:alt="${trainer.name}" class="trainer-image">
 					<div class="trainer-name" th:text="${trainer.name}"></div>
 				</div>
 			</div>
+
 		</section>
 	</main>
 	<div id="imageModal" class="modal">
